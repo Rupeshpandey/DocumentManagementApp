@@ -1,0 +1,68 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80vh;
+    background: linear-gradient(to right, #f0f4f8, #e0e5e9); /* Gradient background */
+    padding: 20px; /* Add padding around the container */
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .login-form {
+    background: #ffffff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+    border-radius: 12px; /* More rounded corners */
+    padding: 30px; /* More padding inside the form */
+    margin-top: auto; /* Align to center vertically */
+    margin-bottom: auto; /* Align to center vertically */
+  }
+  
+  .mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem; /* Add space between fields */
+  }
+  
+  .mat-form-field .mat-form-field-label {
+    font-weight: bold; /* Make the label text bold */
+  }
+  
+  .mat-form-field .mat-input-element {
+    font-size: 1.2em; /* Increase font size of input text */
+  }
+  
+  input:focus {
+    border-color: #007bff; /* Change border color on focus */
+    box-shadow: 0 0 0 2px rgba(38, 143, 255, 0.2); /* Add subtle shadow on focus */
+  }
+  
+  button {
+    width: 100%;
+    font-size: 1.2em; /* Increase font size of the button text */
+    padding: 12px; /* Add padding for a bigger button */
+    border-radius: 8px; /* Match the border-radius with form */
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Darker background on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  }
+  
+  h2 {
+    font-size: 2.5em; /* Increase font size for the form title */
+    font-weight: bold; /* Make the title bold */
+    color: #333; /* Darker color for better contrast */
+  }
+  
+  @media (max-width: 600px) {
+    .login-container {
+      height: auto;
+      padding: 10px;
+    }
+  
+    .login-form {
+      width: 100%;
+      padding: 15px;
+    }
+  }
+  
