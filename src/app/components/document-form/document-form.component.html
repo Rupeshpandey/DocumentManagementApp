@@ -1,1 +1,41 @@
-<p>document-form works!</p>
+<div class="document-form-container">
+    <h2>Add New Document</h2>
+    <form (ngSubmit)="submitForm()">
+      <div class="form-group">
+        <label for="documentTitle">Document Title</label>
+        <input type="text" id="documentTitle" [(ngModel)]="documentTitle" name="documentTitle" class="form-control" required />
+      </div>
+  
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" [(ngModel)]="category" name="category" class="form-control" required>
+          <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="priority">Priority</label>
+        <input type="range" id="priority" [(ngModel)]="priority" name="priority" min="1" max="3" class="form-control-range" />
+        <small class="form-text text-muted">{{priority === 1 ? 'Low' : priority === 2 ? 'Medium' : 'High'}}</small>
+      </div>
+  
+      <div class="form-group">
+        <label for="importance">Importance</label>
+        <input type="range" id="importance" [(ngModel)]="importance" name="importance" min="1" max="10" class="form-control-range" />
+        <small class="form-text text-muted">Importance: {{importance}}</small>
+      </div>
+  
+      <div class="form-group">
+        <label for="documentDate">Document Date</label>
+        <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" required />
+      </div>
+  
+      <div class="form-group">
+        <label for="documentFile">Upload Document</label>
+        <input type="file" id="documentFile" (change)="onFileSelected($event)" name="documentFile" class="form-control" accept=".pdf,.doc,.docx" required />
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  
