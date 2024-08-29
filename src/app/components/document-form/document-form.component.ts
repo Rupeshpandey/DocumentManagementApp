@@ -42,6 +42,8 @@ export class DocumentFormComponent {
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
 
+    console.log(formData)
+
     this.http.post('https://localhost:7143/api/Document/insert', formData)
       .subscribe(() => {
         Swal.fire({
@@ -57,5 +59,23 @@ export class DocumentFormComponent {
           text: 'An error occurred while adding the document.'
         });
       });
+  }
+  logout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Clear user data
+        localStorage.removeItem('userRole');
+        // Navigate to login page
+        this.router.navigate(['/login']);
+        Swal.fire('Logged Out', 'You have been logged out.', 'success');
+      }
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 interface Document {
@@ -27,7 +28,7 @@ throw new Error('Method not implemented.');
   documents: Document[] = [];
   filteredDocuments: Document[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchDocuments();
@@ -73,5 +74,23 @@ throw new Error('Method not implemented.');
     } else if (sortBy === 'importance') {
       this.filteredDocuments = this.filteredDocuments.sort((a, b) => a.importance - b.importance);
     }
+  }
+  logout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Clear user data
+        localStorage.removeItem('userRole');
+        // Navigate to login page
+        this.router.navigate(['/login']);
+        Swal.fire('Logged Out', 'You have been logged out.', 'success');
+      }
+    });
   }
 }

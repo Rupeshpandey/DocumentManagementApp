@@ -1,6 +1,15 @@
+<div class="header">
+  <mat-toolbar color="primary">
+    <span>Document Management System</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+</div>
 <div class="document-form-container">
     <h2>Add New Document</h2>
-    <form (ngSubmit)="submitForm()">
+   <form (ngSubmit)="submitForm()">
       <div class="form-group">
         <label for="documentTitle">Document Title</label>
         <input type="text" id="documentTitle" [(ngModel)]="documentTitle" name="documentTitle" class="form-control" required />

@@ -13,6 +13,7 @@ import { DocumentDashboardComponent } from './components/document-dashboard/docu
 import { MatInputModule } from '@angular/material/input';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AuthService } from './services/auth.service';
     MaterialModule,
     FormsModule,
     MatInputModule,
-    HttpClientModule
+    HttpClientModule,
+    MatToolbarModule
     
   ],
   providers: [AuthService],

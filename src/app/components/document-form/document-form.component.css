@@ -19,4 +19,15 @@
   .btn {
     width: 100%;
   }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
   
