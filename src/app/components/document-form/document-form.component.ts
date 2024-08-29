@@ -34,6 +34,14 @@ export class DocumentFormComponent {
       return;
     }
 
+    // Log form data to console
+  console.log('Document Title:', this.documentTitle);
+  console.log('Category:', this.category);
+  console.log('Priority:', this.priority);
+  console.log('Importance:', this.importance);
+  console.log('Document Date:', this.documentDate);
+  console.log('Document File:', this.documentFile);
+
     const formData = new FormData();
 formData.append('DocumentTitle', this.documentTitle);
 formData.append('Category', this.category);
