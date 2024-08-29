@@ -35,14 +35,15 @@ export class DocumentFormComponent {
     }
 
     const formData = new FormData();
-    formData.append('DocumentTitle', this.documentTitle);
-    formData.append('Category', this.category);
-    formData.append('Priority', this.priority.toString());
-    formData.append('Importance', this.importance.toString());
-    formData.append('DocumentDate', this.documentDate);
-    formData.append('DocumentFile', this.documentFile);
+formData.append('DocumentTitle', this.documentTitle);
+formData.append('Category', this.category);
+formData.append('Priority', this.priority.toString());
+formData.append('Importance', this.importance.toString());
+formData.append('DocumentDate', this.documentDate);
+formData.append('DocumentFile', this.documentFile);
 
-    console.log(formData)
+
+    
 
     this.http.post('https://localhost:7143/api/Document/insert', formData)
       .subscribe(() => {
