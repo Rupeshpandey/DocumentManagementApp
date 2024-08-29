@@ -9,63 +9,62 @@
 </div>
 
 <div class="document-dashboard-container">
-    <h2>Document Dashboard</h2>
-  
-    <div class="filters">
-      <div class="filter-group">
-        <label for="categoryFilter">Filter by Category:</label>
-        <select id="categoryFilter"  class="form-control">
-          <option value="">All</option>
-          <option value="Financial">Financial</option>
-          <option value="Legal">Legal</option>
-          <option value="Projects">Projects</option>
-          <option value="HR">HR</option>
-          <option value="Custom Categories">Custom Categories</option>
-          <option value="Others">Others</option>
-        </select>
-      </div>
-  
-      <div class="filter-group">
-        <label for="sortBy">Sort by:</label>
-        <select id="sortBy"  class="form-control">
-          <option value="date">Date</option>
-          <option value="priority">Priority</option>
-          <option value="importance">Importance</option>
-        </select>
-      </div>
+  <h2>Document Dashboard</h2>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label for="categoryFilter">Filter by Category:</label>
+      <select id="categoryFilter" class="form-control" (change)="filterDocuments($event)">
+        <option value="">All</option>
+        <option value="Financial">Financial</option>
+        <option value="Legal">Legal</option>
+        <option value="Projects">Projects</option>
+        <option value="HR">HR</option>
+        <option value="Custom Categories">Custom Categories</option>
+        <option value="Others">Others</option>
+      </select>
     </div>
-  
-    <div *ngIf="filteredDocuments.length > 0">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Priority</th>
-            <th>Importance</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let document of filteredDocuments">
-            <td>{{ document.documentTitle }}</td>
-            <td>{{ document.category }}</td>
-            <td>{{ document.priority === 1 ? 'Low' : document.priority === 2 ? 'Medium' : 'High' }}</td>
-            <td>{{ document.importance }}</td>
-            <td>{{ document.documentDate }}</td>
-            <td>
-              <button class="btn btn-sm btn-primary" (click)="viewDocument(document.documentId)">View</button>
-              <button class="btn btn-sm btn-warning" (click)="editDocument(document.documentId)">Edit</button>
-              <button class="btn btn-sm btn-danger" (click)="deleteDocument(document.documentId)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <div *ngIf="filteredDocuments.length === 0">
-      <p>No documents found.</p>
+
+    <div class="filter-group">
+      <label for="sortBy">Sort by:</label>
+      <select id="sortBy" class="form-control" (change)="sortDocuments($event)">
+        <option value="date">Date</option>
+        <option value="priority">Priority</option>
+        <option value="importance">Importance</option>
+      </select>
     </div>
   </div>
-  
+
+  <div *ngIf="filteredDocuments.length > 0">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Importance</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let document of filteredDocuments">
+          <td>{{ document.documentTitle }}</td>
+          <td>{{ document.category }}</td>
+          <td>{{ document.priority === 1 ? 'Low' : document.priority === 2 ? 'Medium' : 'High' }}</td>
+          <td>{{ document.importance }}</td>
+          <td>{{ document.documentDate }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" (click)="viewDocument(document.documentId)">View</button>
+            <button class="btn btn-sm btn-warning" (click)="editDocument(document.documentId)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteDocument(document.documentId)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="filteredDocuments.length === 0">
+    <p>No documents found.</p>
+  </div>
+</div>

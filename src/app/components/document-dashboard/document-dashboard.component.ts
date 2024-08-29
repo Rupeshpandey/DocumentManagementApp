@@ -19,12 +19,6 @@ interface Document {
   styleUrls: ['./document-dashboard.component.css']
 })
 export class DocumentDashboardComponent implements OnInit {
-editDocument(arg0: number) {
-throw new Error('Method not implemented.');
-}
-viewDocument(arg0: number) {
-throw new Error('Method not implemented.');
-}
   documents: Document[] = [];
   filteredDocuments: Document[] = [];
 
@@ -62,19 +56,28 @@ throw new Error('Method not implemented.');
     });
   }
 
-  filterDocuments(category: string) {
-    this.filteredDocuments = this.documents.filter(d => d.category === category);
-  }
-
-  sortDocuments(sortBy: string) {
-    if (sortBy === 'date') {
-      this.filteredDocuments = this.filteredDocuments.sort((a, b) => a.documentDate.localeCompare(b.documentDate));
-    } else if (sortBy === 'priority') {
-      this.filteredDocuments = this.filteredDocuments.sort((a, b) => a.priority - b.priority);
-    } else if (sortBy === 'importance') {
-      this.filteredDocuments = this.filteredDocuments.sort((a, b) => a.importance - b.importance);
+  filterDocuments(event: any) {
+    console.log(event);
+    var category  = event.target.value;
+    if (category) {
+      this.filteredDocuments = this.documents.filter(d => d.category === category);
+    } else {
+      this.filteredDocuments = [...this.documents];
     }
   }
+
+  sortDocuments(event: any) {
+    console.log(event);
+    var sortBy = event.target.value;
+    if (sortBy === 'date') {
+      this.filteredDocuments.sort((a, b) => new Date(a.documentDate).getTime() - new Date(b.documentDate).getTime());
+    } else if (sortBy === 'priority') {
+      this.filteredDocuments.sort((a, b) => a.priority - b.priority);
+    } else if (sortBy === 'importance') {
+      this.filteredDocuments.sort((a, b) => a.importance - b.importance);
+    }
+  }
+
   logout() {
     Swal.fire({
       title: 'Are you sure?',
@@ -92,5 +95,13 @@ throw new Error('Method not implemented.');
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
     });
+  }
+
+  viewDocument(documentId: number) {
+    // Implement view document logic here
+  }
+
+  editDocument(documentId: number) {
+    // Implement edit document logic here
   }
 }
