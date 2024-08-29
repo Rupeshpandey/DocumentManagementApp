@@ -34,7 +34,7 @@ throw new Error('Method not implemented.');
   }
 
   fetchDocuments() {
-    this.http.get<Document[]>('https://localhost:5001/api/documents')
+    this.http.get<Document[]>('https://localhost:7143/api/Document/getAll')
       .subscribe(data => {
         this.documents = data;
         this.filteredDocuments = data;

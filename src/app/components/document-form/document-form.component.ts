@@ -42,7 +42,7 @@ export class DocumentFormComponent {
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
 
-    this.http.post('https://localhost:5001/api/documents', formData)
+    this.http.post('https://localhost:7143/api/Document/insert', formData)
       .subscribe(() => {
         Swal.fire({
           icon: 'success',

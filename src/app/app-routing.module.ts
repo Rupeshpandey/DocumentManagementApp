@@ -6,9 +6,10 @@ import { DocumentDashboardComponent } from './components/document-dashboard/docu
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-    { path: 'add-document', component: DocumentFormComponent },
-    { path: 'dashboard', component: DocumentDashboardComponent },
-    { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: 'add-document', component: DocumentFormComponent },
+  { path: 'dashboard', component: DocumentDashboardComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },  // Redirect to login as the default route
+  { path: '**', redirectTo: '/login' }  // Wildcard route for a 404 page, redirects to login
 ];
 
 @NgModule({

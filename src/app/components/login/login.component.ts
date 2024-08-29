@@ -17,10 +17,13 @@ export class LoginComponent {
   onLogin() {
     this.authService.login(this.username, this.password).subscribe(
       (res: any) => {
-        if (res.role === 'Admin') {
-          this.router.navigate(['/dashboard']);
+        // Check the user's role from the response
+        if (res.role === 'admin') {
+          this.router.navigate(['/dashboard']);  // Redirect to Admin Dashboard
+        } else if (res.role === 'section') {
+          this.router.navigate(['/add-document']);  // Redirect to Section User Document Form
         } else {
-          this.router.navigate(['/add-document']);
+          Swal.fire('Error', 'User role not recognized', 'error');
         }
       },
       err => {

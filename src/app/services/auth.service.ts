@@ -8,10 +8,11 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class AuthService {
 
-  private apiUrl = 'https://localhost:7143/api/Document';
+  private apiUrl = 'https://localhost:7143/api/Document';  // Update with your actual API URL
 
   constructor(private http: HttpClient) {}
 
+  // Login method to authenticate the user
   login(username: string, password: string): Observable<boolean> {
     const loginPayload = {
       userId: 0,           // Default value, modify as necessary
@@ -23,6 +24,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, loginPayload).pipe(
       map(response => {
         console.log('API response:', response);
+        // Return true if login is successful, false otherwise
         return response.message === 'Login successful';
       }),
       catchError(error => {
@@ -32,12 +34,15 @@ export class AuthService {
     );
   }
 
+  // Method to check if the user is logged in
   isLoggedIn(): boolean {
-    return false; // Simplified check without tokens
+    return !!localStorage.getItem('user');  // Simplified check using localStorage
   }
 
+  // Method to log out the user
   logout(): Observable<void> {
+    localStorage.removeItem('user');  // Remove user data from localStorage
     console.log('User logged out');
-    return of();
+    return of();  // Observable that completes immediately
   }
 }
