@@ -35,23 +35,20 @@ export class DocumentFormComponent {
     }
 
     // Log form data to console
-  console.log('Document Title:', this.documentTitle);
-  console.log('Category:', this.category);
-  console.log('Priority:', this.priority);
-  console.log('Importance:', this.importance);
-  console.log('Document Date:', this.documentDate);
-  console.log('Document File:', this.documentFile);
+    console.log('Document Title:', this.documentTitle);
+    console.log('Category:', this.category);
+    console.log('Priority:', this.priority);
+    console.log('Importance:', this.importance);
+    console.log('Document Date:', this.documentDate);
+    console.log('Document File:', this.documentFile);
 
     const formData = new FormData();
-formData.append('DocumentTitle', this.documentTitle);
-formData.append('Category', this.category);
-formData.append('Priority', this.priority.toString());
-formData.append('Importance', this.importance.toString());
-formData.append('DocumentDate', this.documentDate);
-formData.append('DocumentFile', this.documentFile);
-
-
-    
+    formData.append('DocumentTitle', this.documentTitle);
+    formData.append('Category', this.category);
+    formData.append('Priority', this.priority.toString());
+    formData.append('Importance', this.importance.toString());
+    formData.append('DocumentDate', this.documentDate);
+    formData.append('DocumentFile', this.documentFile);
 
     this.http.post('https://localhost:7143/api/Document/insert', formData)
       .subscribe(() => {
@@ -69,6 +66,7 @@ formData.append('DocumentFile', this.documentFile);
         });
       });
   }
+
   logout() {
     Swal.fire({
       title: 'Are you sure?',
@@ -86,5 +84,9 @@ formData.append('DocumentFile', this.documentFile);
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
     });
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
   }
 }

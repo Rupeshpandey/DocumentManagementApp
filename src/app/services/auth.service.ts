@@ -40,4 +40,8 @@ export class AuthService {
       })
     );
   }
+  isLoggedIn(): boolean {
+    // Check if user is logged in (e.g., check token in localStorage)
+    return !!localStorage.getItem('userRole');
+  }
 }

@@ -64,7 +64,7 @@ export class DocumentDashboardComponent implements OnInit {
 
   filterDocuments(event: any) {
     console.log(event);
-    var category  = event.target.value;
+    var category = event.target.value;
     if (category) {
       this.filteredDocuments = this.documents.filter(d => d.category === category);
     } else {
@@ -86,7 +86,6 @@ export class DocumentDashboardComponent implements OnInit {
       this.filteredDocuments.sort((a, b) => a.importance - b.importance);
     }
   }
-  
 
   logout() {
     Swal.fire({
@@ -105,6 +104,10 @@ export class DocumentDashboardComponent implements OnInit {
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
     });
+  }
+
+  goToAddDocument() {
+    this.router.navigate(['/add-document']);
   }
 
   viewDocument(documentId: number) {

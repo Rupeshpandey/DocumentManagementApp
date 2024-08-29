@@ -9,7 +9,12 @@
 </div>
 
 <div class="document-dashboard-container">
-  <h2>Document Dashboard</h2>
+  <div class="dashboard-header">
+    <h2>Document Dashboard</h2>
+
+    <!-- Button to navigate to Add Document form -->
+    <button mat-raised-button color="primary" class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
+  </div>
 
   <div class="filters">
     <div class="filter-group">
