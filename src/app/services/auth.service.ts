@@ -13,36 +13,31 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   // Login method to authenticate the user
-  login(username: string, password: string): Observable<boolean> {
+  login(username: string, password: string): Observable<any> {
+    const role = username.toLowerCase() === 'admin' ? 'admin' : 'section'; // Set role based on username
+    
     const loginPayload = {
-      userId: 0,           // Default value, modify as necessary
+      userId: 0,
       username: username,
       passwordHash: password,
-      role: 'admin'        // Assuming 'admin' role, modify as necessary
+      role: role // Assigning role dynamically
     };
-
+  
     return this.http.post<any>(`${this.apiUrl}/login`, loginPayload).pipe(
       map(response => {
         console.log('API response:', response);
-        // Return true if login is successful, false otherwise
-        return response.message === 'Login successful';
+        if (response.message === 'Login successful') {
+          // Save the user role to localStorage for further use
+          localStorage.setItem('userRole', response.role);
+          return response; // Returning the full response including the role
+        } else {
+          return null;
+        }
       }),
       catchError(error => {
         console.error('Login error', error);
-        return of(false);
+        return of(null);
       })
     );
-  }
-
-  // Method to check if the user is logged in
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');  // Simplified check using localStorage
-  }
-
-  // Method to log out the user
-  logout(): Observable<void> {
-    localStorage.removeItem('user');  // Remove user data from localStorage
-    console.log('User logged out');
-    return of();  // Observable that completes immediately
   }
 }
