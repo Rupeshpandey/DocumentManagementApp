@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -31,9 +32,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatInputModule,
     HttpClientModule,
     MatToolbarModule
-    
+
   ],
-  providers: [AuthService],
+  providers: [
+    DatePipe,
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

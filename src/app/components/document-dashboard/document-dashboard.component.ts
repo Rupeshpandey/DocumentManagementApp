@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { DatePipe } from '@angular/common';
 
 interface Document {
   documentId: number;
@@ -10,7 +11,7 @@ interface Document {
   priority: number;
   importance: number;
   documentFileName: string;
-  documentDate: string;
+  documentDate: string | null;
 }
 
 @Component({
@@ -22,7 +23,7 @@ export class DocumentDashboardComponent implements OnInit {
   documents: Document[] = [];
   filteredDocuments: Document[] = [];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private datePipe: DatePipe) {}
 
   ngOnInit(): void {
     this.fetchDocuments();
@@ -31,8 +32,13 @@ export class DocumentDashboardComponent implements OnInit {
   fetchDocuments() {
     this.http.get<Document[]>('https://localhost:7143/api/Document/getAll')
       .subscribe(data => {
-        this.documents = data;
-        this.filteredDocuments = data;
+        this.documents = data.map(doc => {
+          return {
+            ...doc,
+            documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null  // Format the date
+          };
+        });
+        this.filteredDocuments = [...this.documents];
       });
   }
 
@@ -67,16 +73,20 @@ export class DocumentDashboardComponent implements OnInit {
   }
 
   sortDocuments(event: any) {
-    console.log(event);
     var sortBy = event.target.value;
     if (sortBy === 'date') {
-      this.filteredDocuments.sort((a, b) => new Date(a.documentDate).getTime() - new Date(b.documentDate).getTime());
+      this.filteredDocuments.sort((a, b) => {
+        const dateA = a.documentDate ? new Date(a.documentDate).getTime() : 0;
+        const dateB = b.documentDate ? new Date(b.documentDate).getTime() : 0;
+        return dateA - dateB;
+      });
     } else if (sortBy === 'priority') {
       this.filteredDocuments.sort((a, b) => a.priority - b.priority);
     } else if (sortBy === 'importance') {
       this.filteredDocuments.sort((a, b) => a.importance - b.importance);
     }
   }
+  
 
   logout() {
     Swal.fire({
