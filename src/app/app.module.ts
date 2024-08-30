@@ -15,13 +15,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DatePipe } from '@angular/common';
+import { ViewDocumentComponent } from './components/view-document/view-document.component';
+import { EditDocumentComponent } from './components/edit-document/edit-document.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     DocumentFormComponent,
-    DocumentDashboardComponent
+    DocumentDashboardComponent,
+    ViewDocumentComponent,
+    EditDocumentComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +36,8 @@ import { DatePipe } from '@angular/common';
     FormsModule,
     MatInputModule,
     HttpClientModule,
-    MatToolbarModule
+    MatToolbarModule,
+    ReactiveFormsModule
 
   ],
   providers: [

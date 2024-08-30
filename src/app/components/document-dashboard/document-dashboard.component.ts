@@ -42,22 +42,27 @@ export class DocumentDashboardComponent implements OnInit {
       });
   }
 
-  deleteDocument(documentId: number) {
+  // Delete document
+  deleteDocument(documentId: number): void {
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!'
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.http.delete(`https://localhost:5001/api/documents/${documentId}`)
-          .subscribe(() => {
-            Swal.fire('Deleted!', 'Your document has been deleted.', 'success');
-            this.documents = this.documents.filter(d => d.documentId !== documentId);
-            this.filteredDocuments = this.filteredDocuments.filter(d => d.documentId !== documentId);
-          });
+        this.http.delete(`https://localhost:7143/api/Document/${documentId}`).subscribe(
+          () => {
+            Swal.fire('Deleted!', 'The document has been deleted.', 'success');
+            this.fetchDocuments(); // Reload the documents after deletion
+          },
+          (error) => {
+            Swal.fire('Error', 'Failed to delete the document', 'error');
+          }
+        );
       }
     });
   }
@@ -110,11 +115,15 @@ export class DocumentDashboardComponent implements OnInit {
     this.router.navigate(['/add-document']);
   }
 
-  viewDocument(documentId: number) {
-    // Implement view document logic here
+  // View document details
+  viewDocument(documentId: number): void {
+    this.router.navigate(['/document/view', documentId]);
   }
 
-  editDocument(documentId: number) {
-    // Implement edit document logic here
+  // Edit document
+  editDocument(documentId: number): void {
+    this.router.navigate(['/document/edit', documentId]);
   }
+
+  
 }
