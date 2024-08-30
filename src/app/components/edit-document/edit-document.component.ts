@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -22,6 +22,7 @@ interface Document {
 export class EditDocumentComponent implements OnInit {
   documentForm: FormGroup;
   documentId: number;
+  selectedFile: File | null = null; // Store the selected file here
 
   constructor(
     private fb: FormBuilder,
@@ -45,11 +46,18 @@ export class EditDocumentComponent implements OnInit {
     this.getDocumentDetails(this.documentId);
   }
 
-  // Fetch document details by ID and populate the form
   getDocumentDetails(documentId: number): void {
     this.http.get<Document>(`https://localhost:7143/api/Document/${documentId}`).subscribe(
       (data) => {
-        this.documentForm.patchValue(data);
+        const formattedDate = data.documentDate ? data.documentDate.split('T')[0] : null;
+
+        this.documentForm.patchValue({
+          documentTitle: data.documentTitle,
+          category: data.category,
+          priority: data.priority,
+          importance: data.importance,
+          documentDate: formattedDate
+        });
       },
       (error) => {
         Swal.fire('Error', 'Failed to load document details', 'error');
@@ -57,19 +65,31 @@ export class EditDocumentComponent implements OnInit {
     );
   }
 
-  // Save the edited document
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
   saveDocument(): void {
     if (this.documentForm.invalid) {
       return;
     }
 
-    const updatedDocument = this.documentForm.value;
-    updatedDocument.documentId = this.documentId;
+    const formData = new FormData();
+    formData.append('documentTitle', this.documentForm.get('documentTitle')!.value);
+    formData.append('category', this.documentForm.get('category')!.value);
+    formData.append('priority', this.documentForm.get('priority')!.value);
+    formData.append('importance', this.documentForm.get('importance')!.value);
+    formData.append('documentDate', this.documentForm.get('documentDate')!.value);
 
-    // Set headers for the PUT request
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    // Append the file only if a new file was selected
+    if (this.selectedFile) {
+      formData.append('documentFileName', this.selectedFile);
+    }
 
-    this.http.put(`https://localhost:7143/api/Document/${this.documentId}`, updatedDocument, { headers }).subscribe(
+    this.http.put(`https://localhost:7143/api/Document/${this.documentId}`, formData).subscribe(
       () => {
         Swal.fire('Success', 'Document updated successfully', 'success');
         this.router.navigate(['/document-dashboard']);

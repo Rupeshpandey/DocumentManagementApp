@@ -39,8 +39,9 @@
   
       <div class="form-group">
         <label for="documentFileName">Document File</label>
-        <input id="documentFileName" type="file" class="form-control" formControlName="documentFileName" />
+        <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
       </div>
+      
   
       <button mat-raised-button color="primary" type="submit" [disabled]="documentForm.invalid">Save</button>
       <button mat-raised-button color="warn" routerLink="/document-dashboard">Cancel</button>
