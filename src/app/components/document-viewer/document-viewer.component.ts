@@ -19,7 +19,6 @@ export class DocumentViewerComponent {
   }
 
   getDocumentUrl(): string {
-    // Construct the URL to download the document
     return `https://localhost:7143/api/Document/download/${this.data.documentFileName}`;
   }
 }

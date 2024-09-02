@@ -140,6 +140,7 @@ export class DocumentDashboardComponent implements OnInit {
       });
     }
   }
+  
 
   // Edit document
   editDocument(documentId: number): void {
