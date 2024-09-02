@@ -1,50 +1,54 @@
 <div class="edit-document-container">
-    <h2>Edit Document</h2>
-    <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
-      <div class="form-group">
-        <label for="documentTitle">Title</label>
-        <input id="documentTitle" class="form-control" formControlName="documentTitle" />
-      </div>
-  
-      <div class="form-group">
-        <label for="category">Category</label>
-        <select id="category" class="form-control" formControlName="category">
-          <option value="Financial">Financial</option>
-          <option value="Legal">Legal</option>
-          <option value="Projects">Projects</option>
-          <option value="HR">HR</option>
-          <option value="Custom Categories">Custom Categories</option>
-          <option value="Others">Others</option>
-        </select>
-      </div>
-  
-      <div class="form-group">
-        <label for="priority">Priority</label>
-        <select id="priority" class="form-control" formControlName="priority">
-          <option value="1">Low</option>
-          <option value="2">Medium</option>
-          <option value="3">High</option>
-        </select>
-      </div>
-  
-      <div class="form-group">
-        <label for="importance">Importance (1-10)</label>
-        <input id="importance" type="number" class="form-control" formControlName="importance" />
-      </div>
-  
-      <div class="form-group">
-        <label for="documentDate">Document Date</label>
-        <input id="documentDate" type="date" class="form-control" formControlName="documentDate" />
-      </div>
-  
-      <div class="form-group">
-        <label for="documentFileName">Document File</label>
-        <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
-      </div>
-      
-  
-      <button mat-raised-button color="primary" type="submit" [disabled]="documentForm.invalid">Save</button>
-      <button mat-raised-button color="warn" routerLink="/document-dashboard">Cancel</button>
-    </form>
-  </div>
-  
+  <h2>Edit Document</h2>
+  <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
+    <div class="form-group">
+      <label for="documentTitle">Title</label>
+      <input id="documentTitle" class="form-control" formControlName="documentTitle" />
+    </div>
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" class="form-control" formControlName="category">
+        <option value="Financial">Financial</option>
+        <option value="Legal">Legal</option>
+        <option value="Projects">Projects</option>
+        <option value="HR">HR</option>
+        <option value="Custom Categories">Custom Categories</option>
+        <option value="Others">Others</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="priority">Priority</label>
+      <input type="range" id="priority" class="form-control-range" formControlName="priority" min="1" max="7" />
+      <small class="form-text text-muted">
+        {{documentForm.get('priority')?.value === 1 ? 'Not at all Important' :
+          documentForm.get('priority')?.value === 2 ? 'Slightly Important' :
+          documentForm.get('priority')?.value === 3 ? 'Somewhat Important' :
+          documentForm.get('priority')?.value === 4 ? 'Moderately Important' :
+          documentForm.get('priority')?.value === 5 ? 'Important' :
+          documentForm.get('priority')?.value === 6 ? 'Very Important' :
+          'Extremely Important'}}
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="importance">Importance</label>
+      <input type="range" id="importance" class="form-control-range" formControlName="importance" min="1" max="10" />
+      <small class="form-text text-muted">Importance: {{documentForm.get('importance')?.value}}</small>
+    </div>
+
+    <div class="form-group">
+      <label for="documentDate">Document Date</label>
+      <input id="documentDate" type="date" class="form-control" formControlName="documentDate" />
+    </div>
+
+    <div class="form-group">
+      <label for="documentFileName">Document File</label>
+      <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
+    </div>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="documentForm.invalid">Save</button>
+    <button mat-raised-button color="warn" routerLink="/dashboard">Cancel</button>
+  </form>
+</div>

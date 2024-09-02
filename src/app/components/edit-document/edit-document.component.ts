@@ -47,7 +47,7 @@ export class EditDocumentComponent implements OnInit {
   }
 
   getDocumentDetails(documentId: number): void {
-    this.http.get<Document>(`https://localhost:7143/api/Document/${documentId}`).subscribe(
+    this.http.get<Document>(`https://localhost:7143/api/Document/get/${documentId}`).subscribe(
       (data) => {
         const formattedDate = data.documentDate ? data.documentDate.split('T')[0] : null;
 
@@ -89,7 +89,7 @@ export class EditDocumentComponent implements OnInit {
       formData.append('documentFileName', this.selectedFile);
     }
 
-    this.http.put(`https://localhost:7143/api/Document/${this.documentId}`, formData).subscribe(
+    this.http.put(`https://localhost:7143/api/Document/update/${this.documentId}`, formData).subscribe(
       () => {
         Swal.fire('Success', 'Document updated successfully', 'success');
         this.router.navigate(['/document-dashboard']);

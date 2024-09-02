@@ -35,7 +35,7 @@ export class ViewDocumentComponent implements OnInit {
 
   // Fetch document details by ID
   getDocumentDetails(documentId: number): void {
-    this.http.get<Document>(`https://localhost:7143/api/Document/${documentId}`).subscribe(
+    this.http.get<Document>(`https://localhost:7143/api/Document/get/${documentId}`).subscribe(
       (data) => {
         this.document = data;
       },

@@ -30,7 +30,7 @@ export class DocumentDashboardComponent implements OnInit {
   }
 
   fetchDocuments() {
-    this.http.get<Document[]>('https://localhost:7143/api/Document/getAll')
+    this.http.get<Document[]>('https://localhost:7143/api/Document/get')
       .subscribe(data => {
         this.documents = data.map(doc => {
           return {
@@ -54,18 +54,21 @@ export class DocumentDashboardComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.http.delete(`https://localhost:7143/api/Document/${documentId}`).subscribe(
-          () => {
+        this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}`, { responseType: 'text' }).subscribe(
+          (response) => {
             Swal.fire('Deleted!', 'The document has been deleted.', 'success');
             this.fetchDocuments(); // Reload the documents after deletion
           },
           (error) => {
+            console.error('Delete failed', error); // Log error details for debugging
             Swal.fire('Error', 'Failed to delete the document', 'error');
           }
         );
       }
     });
   }
+  
+  
 
   filterDocuments(event: any) {
     console.log(event);

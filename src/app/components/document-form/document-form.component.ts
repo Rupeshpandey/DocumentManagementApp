@@ -20,8 +20,11 @@ export class DocumentFormComponent {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  onFileSelected(event: any) {
-    this.documentFile = event.target.files[0];
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.documentFile = input.files[0];
+    }
   }
 
   submitForm() {
@@ -33,15 +36,7 @@ export class DocumentFormComponent {
       });
       return;
     }
-
-    // Log form data to console
-    console.log('Document Title:', this.documentTitle);
-    console.log('Category:', this.category);
-    console.log('Priority:', this.priority);
-    console.log('Importance:', this.importance);
-    console.log('Document Date:', this.documentDate);
-    console.log('Document File:', this.documentFile);
-
+  
     const formData = new FormData();
     formData.append('DocumentTitle', this.documentTitle);
     formData.append('Category', this.category);
@@ -49,21 +44,26 @@ export class DocumentFormComponent {
     formData.append('Importance', this.importance.toString());
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
-
-    this.http.post('https://localhost:7143/api/Document/insert', formData)
-      .subscribe(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Document Added',
-          text: 'The document has been successfully added!'
-        });
-        this.router.navigate(['/dashboard']);
-      }, error => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Submission Failed',
-          text: 'An error occurred while adding the document.'
-        });
+  
+    this.http.post('https://localhost:7143/api/Document/insert', formData, { responseType: 'text' })
+      .subscribe({
+        next: (response) => {
+          console.log('API Response:', response);
+          Swal.fire({
+            icon: 'success',
+            title: 'Document Added',
+            text: 'The document has been successfully added!'
+          });
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('API Error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Submission Failed',
+            text: 'An error occurred while adding the document.'
+          });
+        }
       });
   }
 

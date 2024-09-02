@@ -18,6 +18,7 @@ import { DatePipe } from '@angular/common';
 import { ViewDocumentComponent } from './components/view-document/view-document.component';
 import { EditDocumentComponent } from './components/edit-document/edit-document.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DocumentFormComponent,
     DocumentDashboardComponent,
     ViewDocumentComponent,
-    EditDocumentComponent
+    EditDocumentComponent,
+    DocumentViewerComponent
   ],
   imports: [
     BrowserModule,
