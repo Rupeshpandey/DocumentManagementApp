@@ -1,3 +1,4 @@
+<!-- document-dashboard.component.html -->
 <div class="header">
   <mat-toolbar color="primary">
     <span>Document Management System</span>
@@ -11,8 +12,6 @@
 <div class="document-dashboard-container">
   <div class="dashboard-header">
     <h2>Document Dashboard</h2>
-
-    <!-- Button to navigate to Add Document form -->
     <button mat-raised-button color="primary" class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
   </div>
 
@@ -60,6 +59,9 @@
           <td>{{ document.importance }}</td>
           <td>{{ document.documentDate }}</td>
           <td>
+            <button mat-icon-button (click)="viewDocumentpopup(document.documentId)">
+              <mat-icon>description</mat-icon>
+            </button>
             <button class="btn btn-sm btn-primary" (click)="viewDocument(document.documentId)">View</button>
             <button class="btn btn-sm btn-warning" (click)="editDocument(document.documentId)">Edit</button>
             <button class="btn btn-sm btn-danger" (click)="deleteDocument(document.documentId)">Delete</button>

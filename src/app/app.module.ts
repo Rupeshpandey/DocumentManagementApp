@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { MaterialModule } from './material/material.module';
 
@@ -39,7 +40,8 @@ import { DocumentViewerComponent } from './components/document-viewer/document-v
     MatInputModule,
     HttpClientModule,
     MatToolbarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule
 
   ],
   providers: [

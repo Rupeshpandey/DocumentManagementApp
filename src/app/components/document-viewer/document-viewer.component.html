@@ -1,1 +1,7 @@
-<p>document-viewer works!</p>
+<h2 mat-dialog-title>{{ data.documentTitle }}</h2>
+<mat-dialog-content>
+  <iframe [src]="documentUrl" width="100%" height="500px"></iframe>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

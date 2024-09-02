@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
 
 interface Document {
   documentId: number;
@@ -23,7 +25,11 @@ export class DocumentDashboardComponent implements OnInit {
   documents: Document[] = [];
   filteredDocuments: Document[] = [];
 
-  constructor(private http: HttpClient, private router: Router, private datePipe: DatePipe) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private datePipe: DatePipe,
+    private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchDocuments();
@@ -121,6 +127,18 @@ export class DocumentDashboardComponent implements OnInit {
   // View document details
   viewDocument(documentId: number): void {
     this.router.navigate(['/document/view', documentId]);
+  }
+  viewDocumentpopup(documentId: number): void {
+    const document = this.documents.find(doc => doc.documentId === documentId);
+    if (document) {
+      this.dialog.open(DocumentViewerComponent, {
+        data: {
+          documentTitle: document.documentTitle,
+          documentFileName: document.documentFileName
+        },
+        width: '600px'
+      });
+    }
   }
 
   // Edit document
