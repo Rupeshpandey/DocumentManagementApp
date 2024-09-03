@@ -128,13 +128,13 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     if (document) {
       this.dialog.open(DocumentViewerComponent, {
         data: {
-          documentTitle: document.documentTitle,
-          documentFileName: document.documentFileName
+          documentId: document.documentId
         },
         width: '600px'
       });
     }
   }
+  
 
   editDocument(documentId: number): void {
     this.router.navigate(['/document/edit', documentId]);

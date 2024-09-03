@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -8,26 +9,23 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./document-viewer.component.css']
 })
 export class DocumentViewerComponent implements OnInit {
-  documentTitle: string;
-  documentFileName: string;
-  documentUrl: SafeResourceUrl;
+  documentUrl: SafeResourceUrl | null = null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<DocumentViewerComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { documentId: number },
+    private http: HttpClient,
     private sanitizer: DomSanitizer
-  ) { 
-    this.documentTitle = data.documentTitle;
-    this.documentFileName = decodeURIComponent(data.documentFileName); // Decode the file name
+  ) { }
 
-    // Sanitize the URL with the encoded file name
-    this.documentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`https://localhost:7143/api/Document/view/${encodeURIComponent(this.documentFileName)}`);
-    console.log('Document URL:', this.documentUrl);
-  }
-
-  ngOnInit(): void { }
-
-  close(): void {
-    this.dialogRef.close();
+  ngOnInit(): void {
+    if (this.data.documentId) {
+      this.http.get(`https://localhost:7143/api/document/view/${this.data.documentId}`, { responseType: 'blob' })
+        .subscribe(blob => {
+          const url = URL.createObjectURL(blob);
+          this.documentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url) as SafeResourceUrl;
+        }, error => {
+          console.error('Error fetching document', error);
+        });
+    }
   }
 }

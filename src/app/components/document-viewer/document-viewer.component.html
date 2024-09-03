@@ -1,17 +1,3 @@
-<div class="document-viewer-container">
-    <h2>{{ documentTitle }}</h2>
-  
-    <div class="document-display">
-      <iframe 
-        [src]="documentUrl" 
-        width="100%" 
-        height="600px" 
-        frameborder="0">
-      </iframe>
-    </div>
-  
-    <div class="actions">
-      <button mat-button color="primary" (click)="close()">Close</button>
-    </div>
-  </div>
-  
+<div *ngIf="documentUrl">
+  <iframe [src]="documentUrl" width="100%" height="600px"></iframe>
+</div>
