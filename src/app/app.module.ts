@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatButtonModule } from '@angular/material/button';
 import { MaterialModule } from './material/material.module';
-
+import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,8 +18,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { DatePipe } from '@angular/common';
 import { ViewDocumentComponent } from './components/view-document/view-document.component';
 import { EditDocumentComponent } from './components/edit-document/edit-document.component';
-import { ReactiveFormsModule } from '@angular/forms';
+
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -41,13 +43,18 @@ import { DocumentViewerComponent } from './components/document-viewer/document-v
     HttpClientModule,
     MatToolbarModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatTableModule,
+    MatSortModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule
 
   ],
   providers: [
     DatePipe,
     AuthService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [DocumentViewerComponent]
 })
 export class AppModule { }

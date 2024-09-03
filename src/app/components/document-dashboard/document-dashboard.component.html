@@ -11,7 +11,7 @@
 <div class="document-dashboard-container">
   <div class="dashboard-header">
     <h2>Document Dashboard</h2>
-    <button mat-raised-button color="primary" class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
+    <button mat-raised-button class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
   </div>
 
   <div class="filters">
@@ -27,19 +27,11 @@
         <option value="Others">Others</option>
       </select>
     </div>
-
-    <div class="filter-group">
-      <label for="sortBy">Sort by:</label>
-      <select id="sortBy" class="form-control" (change)="sortDocuments($event)">
-        <option value="date">Date</option>
-        <option value="priority">Priority</option>
-        <option value="importance">Importance</option>
-      </select>
-    </div>
   </div>
 
   <div *ngIf="dataSource.data.length > 0">
-    <table mat-table [dataSource]="dataSource" matSort>
+    <table mat-table [dataSource]="dataSource" matSort class="table">
+
       <ng-container matColumnDef="documentTitle">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
         <td mat-cell *matCellDef="let document">{{ document.documentTitle }}</td>
@@ -70,12 +62,18 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let document">
-          <button mat-icon-button (click)="viewDocumentpopup(document.documentId)">
+          <button mat-icon-button color="accent" (click)="viewDocumentpopup(document.documentId)">
             <mat-icon>description</mat-icon>
           </button>
-          <button mat-button (click)="viewDocument(document.documentId)">View</button>
-          <button mat-button (click)="editDocument(document.documentId)">Edit</button>
-          <button mat-button (click)="deleteDocument(document.documentId)">Delete</button>
+          <button mat-icon-button color="primary" (click)="viewDocument(document.documentId)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="editDocument(document.documentId)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteDocument(document.documentId)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
 
@@ -84,7 +82,7 @@
     </table>
   </div>
 
-  <div *ngIf="dataSource.data.length === 0">
+  <div *ngIf="dataSource.data.length === 0" class="no-documents">
     <p>No documents found.</p>
   </div>
 </div>

@@ -26,8 +26,8 @@ interface Document {
 export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
   dataSource = new MatTableDataSource<Document>([]);
-  
-  @ViewChild(MatSort) sort!: MatSort; // Non-null assertion operator
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private http: HttpClient,
@@ -41,6 +41,18 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
+      switch (property) {
+        case 'documentDate':
+          return new Date(item.documentDate || '').getTime();
+        case 'priority':
+          return item.priority;
+        case 'importance':
+          return item.importance;
+        default:
+          return (item as any)[property];
+      }
+    };
   }
 
   fetchDocuments() {
@@ -65,7 +77,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}`, { responseType: 'text' }).subscribe(
-          (response) => {
+          () => {
             Swal.fire('Deleted!', 'The document has been deleted.', 'success');
             this.fetchDocuments(); // Reload the documents after deletion
           },
@@ -79,12 +91,11 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   filterDocuments(event: any) {
-    const category = event.target.value;
-    this.dataSource.filter = category.trim().toLowerCase();
-  }
-
-  sortDocuments(event: any) {
-    // Custom sorting logic can be added here if needed
+    const category = event.target.value.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Document, filter: string) => {
+      return data.category.toLowerCase().includes(filter);
+    };
+    this.dataSource.filter = category;
   }
 
   logout() {
@@ -97,9 +108,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Clear user data
         localStorage.removeItem('userRole');
-        // Navigate to login page
         this.router.navigate(['/login']);
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
