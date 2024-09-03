@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -7,18 +7,27 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './document-viewer.component.html',
   styleUrls: ['./document-viewer.component.css']
 })
-export class DocumentViewerComponent {
+export class DocumentViewerComponent implements OnInit {
+  documentTitle: string;
+  documentFileName: string;
   documentUrl: SafeResourceUrl;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<DocumentViewerComponent>,
     private sanitizer: DomSanitizer
-  ) {
-    // Use the sanitizer to bypass Angular's security model
-    this.documentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.getDocumentUrl());
+  ) { 
+    this.documentTitle = data.documentTitle;
+    this.documentFileName = decodeURIComponent(data.documentFileName); // Decode the file name
+
+    // Sanitize the URL with the encoded file name
+    this.documentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`https://localhost:7143/api/Document/view/${encodeURIComponent(this.documentFileName)}`);
+    console.log('Document URL:', this.documentUrl);
   }
 
-  getDocumentUrl(): string {
-    return `https://localhost:7143/api/Document/download/${this.data.documentFileName}`;
+  ngOnInit(): void { }
+
+  close(): void {
+    this.dialogRef.close();
   }
 }

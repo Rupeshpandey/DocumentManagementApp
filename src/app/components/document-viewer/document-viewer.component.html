@@ -1,4 +1,17 @@
 <div class="document-viewer-container">
-    <iframe [src]="documentUrl" width="100%" height="600px"></iframe>
+    <h2>{{ documentTitle }}</h2>
+  
+    <div class="document-display">
+      <iframe 
+        [src]="documentUrl" 
+        width="100%" 
+        height="600px" 
+        frameborder="0">
+      </iframe>
+    </div>
+  
+    <div class="actions">
+      <button mat-button color="primary" (click)="close()">Close</button>
+    </div>
   </div>
   

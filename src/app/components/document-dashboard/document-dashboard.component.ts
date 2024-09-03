@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
 
 interface Document {
@@ -21,9 +23,11 @@ interface Document {
   templateUrl: './document-dashboard.component.html',
   styleUrls: ['./document-dashboard.component.css']
 })
-export class DocumentDashboardComponent implements OnInit {
-  documents: Document[] = [];
-  filteredDocuments: Document[] = [];
+export class DocumentDashboardComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
+  dataSource = new MatTableDataSource<Document>([]);
+  
+  @ViewChild(MatSort) sort!: MatSort; // Non-null assertion operator
 
   constructor(
     private http: HttpClient,
@@ -35,20 +39,20 @@ export class DocumentDashboardComponent implements OnInit {
     this.fetchDocuments();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
   fetchDocuments() {
     this.http.get<Document[]>('https://localhost:7143/api/Document/get')
       .subscribe(data => {
-        this.documents = data.map(doc => {
-          return {
-            ...doc,
-            documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null  // Format the date
-          };
-        });
-        this.filteredDocuments = [...this.documents];
+        this.dataSource.data = data.map(doc => ({
+          ...doc,
+          documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null
+        }));
       });
   }
 
-  // Delete document
   deleteDocument(documentId: number): void {
     Swal.fire({
       title: 'Are you sure?',
@@ -73,32 +77,14 @@ export class DocumentDashboardComponent implements OnInit {
       }
     });
   }
-  
-  
 
   filterDocuments(event: any) {
-    console.log(event);
-    var category = event.target.value;
-    if (category) {
-      this.filteredDocuments = this.documents.filter(d => d.category === category);
-    } else {
-      this.filteredDocuments = [...this.documents];
-    }
+    const category = event.target.value;
+    this.dataSource.filter = category.trim().toLowerCase();
   }
 
   sortDocuments(event: any) {
-    var sortBy = event.target.value;
-    if (sortBy === 'date') {
-      this.filteredDocuments.sort((a, b) => {
-        const dateA = a.documentDate ? new Date(a.documentDate).getTime() : 0;
-        const dateB = b.documentDate ? new Date(b.documentDate).getTime() : 0;
-        return dateA - dateB;
-      });
-    } else if (sortBy === 'priority') {
-      this.filteredDocuments.sort((a, b) => a.priority - b.priority);
-    } else if (sortBy === 'importance') {
-      this.filteredDocuments.sort((a, b) => a.importance - b.importance);
-    }
+    // Custom sorting logic can be added here if needed
   }
 
   logout() {
@@ -124,12 +110,12 @@ export class DocumentDashboardComponent implements OnInit {
     this.router.navigate(['/add-document']);
   }
 
-  // View document details
   viewDocument(documentId: number): void {
     this.router.navigate(['/document/view', documentId]);
   }
+
   viewDocumentpopup(documentId: number): void {
-    const document = this.documents.find(doc => doc.documentId === documentId);
+    const document = this.dataSource.data.find(doc => doc.documentId === documentId);
     if (document) {
       this.dialog.open(DocumentViewerComponent, {
         data: {
@@ -140,12 +126,8 @@ export class DocumentDashboardComponent implements OnInit {
       });
     }
   }
-  
 
-  // Edit document
   editDocument(documentId: number): void {
     this.router.navigate(['/document/edit', documentId]);
   }
-
-  
 }
