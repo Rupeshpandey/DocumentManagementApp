@@ -39,7 +39,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     this.fetchDocuments();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
       switch (property) {
@@ -134,7 +134,6 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  
 
   editDocument(documentId: number): void {
     this.router.navigate(['/document/edit', documentId]);
