@@ -36,3 +36,42 @@ h2 {
   justify-content: flex-end;
   margin-bottom: 20px;
 }
+/* document-form.component.css */
+.document-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.button-container {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+/* document-dashboard.component.css */
+.document-dashboard-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filters {
+  margin-bottom: 20px;
+}

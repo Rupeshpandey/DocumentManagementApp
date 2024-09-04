@@ -88,3 +88,77 @@
   color: #757575;
   font-size: 16px;
 }
+
+.table th {
+  cursor: pointer;
+}
+
+.bi {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+.bi-sort-up::before {
+  content: '\f0de'; /* FontAwesome sort-up icon */
+}
+
+.bi-sort-down::before {
+  content: '\f0dd'; /* FontAwesome sort-down icon */
+}
+
+.header mat-toolbar {
+  margin-bottom: 1rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.add-document-btn {
+  margin-left: 1rem;
+}
+
+.filters {
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  margin-bottom: 0.5rem;
+}
+
+.table th {
+  cursor: pointer;
+}
+
+.bi {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+.bi-sort-up::before {
+  content: '\f0de'; /* FontAwesome sort-up icon */
+}
+
+.bi-sort-down::before {
+  content: '\f0dd'; /* FontAwesome sort-down icon */
+}
+
+.header mat-toolbar {
+  margin-bottom: 1rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.add-document-btn {
+  margin-left: 1rem;
+}
+
+.filters {
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  margin-bottom: 0.5rem;
+}

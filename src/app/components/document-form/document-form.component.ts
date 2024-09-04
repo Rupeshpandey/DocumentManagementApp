@@ -48,7 +48,6 @@ export class DocumentFormComponent {
     this.http.post('https://localhost:7143/api/Document/insert', formData, { responseType: 'text' })
       .subscribe({
         next: (response) => {
-          console.log('API Response:', response);
           Swal.fire({
             icon: 'success',
             title: 'Document Added',
@@ -57,7 +56,6 @@ export class DocumentFormComponent {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          console.error('API Error:', error);
           Swal.fire({
             icon: 'error',
             title: 'Submission Failed',
@@ -77,9 +75,7 @@ export class DocumentFormComponent {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Clear user data
         localStorage.removeItem('userRole');
-        // Navigate to login page
         this.router.navigate(['/login']);
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
@@ -88,5 +84,10 @@ export class DocumentFormComponent {
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  getPriorityLabel(priority: number): string {
+    const labels = ['Not at all Important', 'Slightly Important', 'Somewhat Important', 'Moderately Important', 'Important', 'Very Important', 'Extremely Important'];
+    return labels[priority - 1];
   }
 }

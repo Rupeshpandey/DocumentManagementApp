@@ -32,7 +32,9 @@
     <div class="form-group">
       <label for="priority">Priority</label>
       <input type="range" id="priority" [(ngModel)]="priority" name="priority" min="1" max="7" class="form-control-range" />
-      <small class="form-text text-muted">{{priority === 1 ? 'Not at all Important' : priority === 2 ? 'Slightly Important' : priority === 3 ? 'Somewhat Important' : priority === 4 ? 'Moderately Important' : priority === 5 ? 'Important' : priority === 6 ? 'Very Important' : 'Extremely Important'}}</small>
+      <small class="form-text text-muted">
+        {{ getPriorityLabel(priority) }}
+      </small>
     </div>
 
     <div class="form-group">
