@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MaterialModule } from './material/material.module';
+import { MaterialModule } from './material/material.module'; // Ensure this is correctly set up
 import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,7 +18,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { DatePipe } from '@angular/common';
 import { ViewDocumentComponent } from './components/view-document/view-document.component';
 import { EditDocumentComponent } from './components/edit-document/edit-document.component';
-
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -47,14 +46,12 @@ import { MatSortModule } from '@angular/material/sort';
     MatSortModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule
-
+    MatIconModule,
   ],
   providers: [
     DatePipe,
     AuthService
   ],
-  bootstrap: [AppComponent],
-  entryComponents: [DocumentViewerComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

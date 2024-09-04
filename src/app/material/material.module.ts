@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSortModule } from '@angular/material/sort';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -30,7 +31,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatTableModule,
     MatIconModule,
     MatToolbarModule,
-    MatSortModule
+    MatSortModule,
+ 
   ],
   exports: [
     CommonModule,
@@ -44,7 +46,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatDatepickerModule,
     MatNativeDateModule,
     MatTableModule,
-    MatIconModule
+    MatIconModule,
+    MatSortModule
   ],
   providers: [
     MatDatepickerModule

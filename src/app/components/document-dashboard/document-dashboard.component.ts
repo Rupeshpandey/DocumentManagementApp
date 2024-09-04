@@ -27,45 +27,75 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
   dataSource = new MatTableDataSource<Document>([]);
 
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+
 
   constructor(
     private http: HttpClient,
     private router: Router,
     private datePipe: DatePipe,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
+    console.log('Component initialized.');
     this.fetchDocuments();
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
-      switch (property) {
-        case 'documentDate':
-          return new Date(item.documentDate || '').getTime();
-        case 'priority':
-          return item.priority;
-        case 'importance':
-          return item.importance;
-        default:
-          return (item as any)[property];
-      }
-    };
+    console.log('After view init. Setting up sort...');
+  
+    if (this.sort) {
+      console.log('Sort initialized:', this.sort);
+      this.dataSource.sort = this.sort;
+  
+      this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
+        console.log('Sorting by property:', property);
+        switch (property) {
+          case 'documentDate':
+            const dateValue = new Date(item.documentDate || '').getTime();
+            console.log('Date value for sorting:', dateValue);
+            return dateValue;
+          case 'priority':
+            console.log('Priority value for sorting:', item.priority);
+            return item.priority;
+          case 'importance':
+            console.log('Importance value for sorting:', item.importance);
+            return item.importance;
+          default:
+            const stringValue = (item as any)[property]?.toString().toLowerCase() || '';
+            console.log(`String value for sorting (property: ${property}):`, stringValue);
+            return stringValue;
+        }
+      };
+  
+      this.sort.sortChange.subscribe(() => {
+        console.log('Sort changed. Current sort direction:', this.sort.direction);
+        console.log('Current sort active:', this.sort.active);
+      });
+    } else {
+      console.error('MatSort is not initialized');
+    }
   }
+  
 
   fetchDocuments() {
+    console.log('Fetching documents...');
     this.http.get<Document[]>('https://localhost:7143/api/Document/get')
       .subscribe(data => {
+        console.log('Documents fetched:', data);
         this.dataSource.data = data.map(doc => ({
           ...doc,
           documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null
         }));
+        console.log('Processed documents with formatted dates:', this.dataSource.data);
+      }, error => {
+        console.error('Error fetching documents:', error);
       });
   }
 
   deleteDocument(documentId: number): void {
+    console.log('Attempting to delete document with ID:', documentId);
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -76,29 +106,37 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
+        console.log('Delete confirmation received.');
         this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}`, { responseType: 'text' }).subscribe(
           () => {
+            console.log('Document deleted successfully:', documentId);
             Swal.fire('Deleted!', 'The document has been deleted.', 'success');
             this.fetchDocuments(); // Reload the documents after deletion
           },
           (error) => {
-            console.error('Delete failed', error); // Log error details for debugging
+            console.error('Delete failed:', error);
             Swal.fire('Error', 'Failed to delete the document', 'error');
           }
         );
+      } else {
+        console.log('Delete action canceled.');
       }
     });
   }
 
   filterDocuments(event: any) {
     const category = event.target.value.trim().toLowerCase();
+    console.log('Filtering documents by category:', category);
     this.dataSource.filterPredicate = (data: Document, filter: string) => {
-      return data.category.toLowerCase().includes(filter);
+      const match = data.category.toLowerCase().includes(filter);
+      console.log('Filter match:', match, 'for document:', data);
+      return match;
     };
     this.dataSource.filter = category;
   }
 
   logout() {
+    console.log('Logging out...');
     Swal.fire({
       title: 'Are you sure?',
       text: 'You will be logged out.',
@@ -108,22 +146,30 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem('userRole');
+        console.log('User confirmed logout.');
         this.router.navigate(['/login']);
-        Swal.fire('Logged Out', 'You have been logged out.', 'success');
+      } else {
+        console.log('Logout canceled.');
       }
     });
   }
 
+  viewDocument(documentId: number): void {
+    console.log('Viewing document with ID:', documentId);
+    this.dialog.open(DocumentViewerComponent, {
+      data: { documentId },
+      width: '80vw',
+      height: '80vh'
+    });
+  }
+
   goToAddDocument() {
+    console.log('Navigating to add document page.');
     this.router.navigate(['/add-document']);
   }
 
-  viewDocument(documentId: number): void {
-    this.router.navigate(['/document/view', documentId]);
-  }
-
   viewDocumentpopup(documentId: number): void {
+    console.log('Opening document viewer popup for document ID:', documentId);
     const document = this.dataSource.data.find(doc => doc.documentId === documentId);
     if (document) {
       this.dialog.open(DocumentViewerComponent, {
@@ -132,10 +178,13 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
         },
         width: '600px'
       });
+    } else {
+      console.warn('Document not found for ID:', documentId);
     }
   }
 
   editDocument(documentId: number): void {
+    console.log('Editing document with ID:', documentId);
     this.router.navigate(['/document/edit', documentId]);
   }
 }
