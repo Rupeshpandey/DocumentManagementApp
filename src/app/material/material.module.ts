@@ -14,6 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -47,7 +48,9 @@ import { MatSortModule } from '@angular/material/sort';
     MatNativeDateModule,
     MatTableModule,
     MatIconModule,
-    MatSortModule
+    MatSortModule,
+    MatDialogModule,
+    MatToolbarModule,
   ],
   providers: [
     MatDatepickerModule

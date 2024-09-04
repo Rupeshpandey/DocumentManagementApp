@@ -40,13 +40,7 @@ import { MatSortModule } from '@angular/material/sort';
     FormsModule,
     MatInputModule,
     HttpClientModule,
-    MatToolbarModule,
     ReactiveFormsModule,
-    MatTableModule,
-    MatSortModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
   ],
   providers: [
     DatePipe,

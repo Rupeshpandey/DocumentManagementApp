@@ -1,3 +1,8 @@
+
+
+
+
+
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -21,14 +26,13 @@ interface Document {
 @Component({
   selector: 'app-document-dashboard',
   templateUrl: './document-dashboard.component.html',
-  styleUrls: ['./document-dashboard.component.css']
+  styleUrls: ['./document-dashboard.component.css'],
 })
 export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
   dataSource = new MatTableDataSource<Document>([]);
 
-  @ViewChild(MatSort, { static: false }) sort!: MatSort;
-
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private http: HttpClient,
@@ -44,40 +48,31 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     console.log('After view init. Setting up sort...');
-  
+
     if (this.sort) {
-      console.log('Sort initialized:', this.sort);
       this.dataSource.sort = this.sort;
-  
+
       this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
-        console.log('Sorting by property:', property);
         switch (property) {
           case 'documentDate':
-            const dateValue = new Date(item.documentDate || '').getTime();
-            console.log('Date value for sorting:', dateValue);
-            return dateValue;
+            return new Date(item.documentDate || '').getTime();
           case 'priority':
-            console.log('Priority value for sorting:', item.priority);
             return item.priority;
           case 'importance':
-            console.log('Importance value for sorting:', item.importance);
             return item.importance;
           default:
-            const stringValue = (item as any)[property]?.toString().toLowerCase() || '';
-            console.log(`String value for sorting (property: ${property}):`, stringValue);
-            return stringValue;
+            return (item as any)[property]?.toString().toLowerCase() || '';
         }
       };
-  
+
       this.sort.sortChange.subscribe(() => {
         console.log('Sort changed. Current sort direction:', this.sort.direction);
         console.log('Current sort active:', this.sort.active);
       });
-    } else {
-      console.error('MatSort is not initialized');
+    } else{
+      console.log("mat sort not initialize");
     }
   }
-  
 
   fetchDocuments() {
     console.log('Fetching documents...');
@@ -188,3 +183,4 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/document/edit', documentId]);
   }
 }
+
