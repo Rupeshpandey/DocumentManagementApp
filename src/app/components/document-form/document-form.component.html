@@ -43,6 +43,19 @@
       <small class="form-text text-muted">Importance: {{importance}}</small>
     </div>
 
+    <!-- <ng-container matColumnDef="priority">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Priority</th>
+      <td mat-cell *matCellDef="let document">
+        {{ getPriorityLabel(document.priority) }}
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="importance">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Importance</th>
+      <td mat-cell *matCellDef="let document">{{ document.importance }}</td>
+    </ng-container> -->
+    
+
     <div class="form-group">
       <label for="documentDate">Document Date</label>
       <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" required />
