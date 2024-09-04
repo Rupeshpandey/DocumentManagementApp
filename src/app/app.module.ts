@@ -16,7 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { DatePipe } from '@angular/common';
-import { ViewDocumentComponent } from './components/view-document/view-document.component';
+
 import { EditDocumentComponent } from './components/edit-document/edit-document.component';
 import { DocumentViewerComponent } from './components/document-viewer/document-viewer.component';
 import { MatTableModule } from '@angular/material/table';
@@ -28,7 +28,7 @@ import { MatSortModule } from '@angular/material/sort';
     LoginComponent,
     DocumentFormComponent,
     DocumentDashboardComponent,
-    ViewDocumentComponent,
+   
     EditDocumentComponent,
     DocumentViewerComponent
   ],

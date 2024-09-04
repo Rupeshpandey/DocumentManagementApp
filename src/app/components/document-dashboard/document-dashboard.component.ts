@@ -1,16 +1,9 @@
-
-
-
-
-
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
 
 interface Document {
@@ -28,11 +21,13 @@ interface Document {
   templateUrl: './document-dashboard.component.html',
   styleUrls: ['./document-dashboard.component.css'],
 })
-export class DocumentDashboardComponent implements OnInit, AfterViewInit {
+export class DocumentDashboardComponent implements OnInit {
   displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
-  dataSource = new MatTableDataSource<Document>([]);
+  dataSource: Document[] = [];
+  originalDataSource: Document[] = []; // Copy of original data
 
-  @ViewChild(MatSort) sort!: MatSort;
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(
     private http: HttpClient,
@@ -42,55 +37,71 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Component initialized.');
     this.fetchDocuments();
   }
 
-  ngAfterViewInit(): void {
-    console.log('After view init. Setting up sort...');
+  fetchDocuments() {
+    this.http.get<Document[]>('https://localhost:7143/api/Document/get').subscribe(
+      (data) => {
+        this.originalDataSource = data.map((doc) => ({
+          ...doc,
+          documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null,
+        }));
+        this.dataSource = [...this.originalDataSource]; // Initialize dataSource with original data
+      },
+      (error) => {
+        console.error('Error fetching documents:', error);
+      }
+    );
+  }
 
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-
-      this.dataSource.sortingDataAccessor = (item: Document, property: string) => {
-        switch (property) {
-          case 'documentDate':
-            return new Date(item.documentDate || '').getTime();
-          case 'priority':
-            return item.priority;
-          case 'importance':
-            return item.importance;
-          default:
-            return (item as any)[property]?.toString().toLowerCase() || '';
-        }
-      };
-
-      this.sort.sortChange.subscribe(() => {
-        console.log('Sort changed. Current sort direction:', this.sort.direction);
-        console.log('Current sort active:', this.sort.active);
-      });
-    } else{
-      console.log("mat sort not initialize");
+  filterDocuments(event: any) {
+    const category = event.target.value.trim().toLowerCase();
+    if (category) {
+      this.dataSource = this.originalDataSource.filter((doc) =>
+        doc.category.toLowerCase().includes(category)
+      );
+    } else {
+      this.dataSource = [...this.originalDataSource]; // Reset to original data if no category is selected
     }
   }
 
-  fetchDocuments() {
-    console.log('Fetching documents...');
-    this.http.get<Document[]>('https://localhost:7143/api/Document/get')
-      .subscribe(data => {
-        console.log('Documents fetched:', data);
-        this.dataSource.data = data.map(doc => ({
-          ...doc,
-          documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null
-        }));
-        console.log('Processed documents with formatted dates:', this.dataSource.data);
-      }, error => {
-        console.error('Error fetching documents:', error);
-      });
+  sortData(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.dataSource.sort((a, b) => {
+      let valueA = this.getValue(a, column);
+      let valueB = this.getValue(b, column);
+
+      if (valueA < valueB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      } else if (valueA > valueB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
+  getValue(document: Document, column: string): any {
+    switch (column) {
+      case 'documentDate':
+        return new Date(document.documentDate || '').getTime();
+      case 'priority':
+        return document.priority;
+      case 'importance':
+        return document.importance;
+      default:
+        return document[column as keyof Document]?.toString().toLowerCase();
+    }
   }
 
   deleteDocument(documentId: number): void {
-    console.log('Attempting to delete document with ID:', documentId);
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -98,89 +109,58 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log('Delete confirmation received.');
         this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}`, { responseType: 'text' }).subscribe(
           () => {
-            console.log('Document deleted successfully:', documentId);
             Swal.fire('Deleted!', 'The document has been deleted.', 'success');
             this.fetchDocuments(); // Reload the documents after deletion
           },
           (error) => {
-            console.error('Delete failed:', error);
             Swal.fire('Error', 'Failed to delete the document', 'error');
           }
         );
-      } else {
-        console.log('Delete action canceled.');
       }
     });
   }
 
-  filterDocuments(event: any) {
-    const category = event.target.value.trim().toLowerCase();
-    console.log('Filtering documents by category:', category);
-    this.dataSource.filterPredicate = (data: Document, filter: string) => {
-      const match = data.category.toLowerCase().includes(filter);
-      console.log('Filter match:', match, 'for document:', data);
-      return match;
-    };
-    this.dataSource.filter = category;
-  }
-
   logout() {
-    console.log('Logging out...');
     Swal.fire({
       title: 'Are you sure?',
       text: 'You will be logged out.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, logout',
-      cancelButtonText: 'Cancel'
+      cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log('User confirmed logout.');
         this.router.navigate(['/login']);
-      } else {
-        console.log('Logout canceled.');
       }
     });
   }
 
   viewDocument(documentId: number): void {
-    console.log('Viewing document with ID:', documentId);
-    this.dialog.open(DocumentViewerComponent, {
-      data: { documentId },
-      width: '80vw',
-      height: '80vh'
-    });
+    this.router.navigate(['/document/view', documentId]);
   }
 
   goToAddDocument() {
-    console.log('Navigating to add document page.');
     this.router.navigate(['/add-document']);
   }
 
   viewDocumentpopup(documentId: number): void {
-    console.log('Opening document viewer popup for document ID:', documentId);
-    const document = this.dataSource.data.find(doc => doc.documentId === documentId);
+    const document = this.dataSource.find((doc) => doc.documentId === documentId);
     if (document) {
       this.dialog.open(DocumentViewerComponent, {
         data: {
-          documentId: document.documentId
+          documentId: document.documentId,
         },
-        width: '600px'
+        width: '600px',
       });
-    } else {
-      console.warn('Document not found for ID:', documentId);
     }
   }
 
   editDocument(documentId: number): void {
-    console.log('Editing document with ID:', documentId);
     this.router.navigate(['/document/edit', documentId]);
   }
 }
-
