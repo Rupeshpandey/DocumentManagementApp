@@ -1,7 +1,7 @@
 export interface Document {
     documentId: number;
     documentTitle: string;
-    category: string;
+    categoryId: number;
     priority: number;
     importance: number;
     documentFile: ArrayBuffer;

@@ -1,71 +1,84 @@
-<div class="header">
-  <mat-toolbar color="primary">
-    <span>Document Management System</span>
-    <span class="spacer"></span>
-    <button mat-icon-button (click)="logout()">
-      <mat-icon>logout</mat-icon>
-    </button>
-  </mat-toolbar>
-</div>
-
 <div class="document-dashboard-container">
+  <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h2>Document Dashboard</h2>
-    <button mat-raised-button class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
+    <button class="add-document-btn" (click)="goToAddDocument()">Add Document</button>
   </div>
 
+  <!-- Filters Section -->
   <div class="filters">
     <div class="filter-group">
-      <label for="categoryFilter">Filter by Category:</label>
-      <select id="categoryFilter" class="form-control" (change)="filterDocuments($event)">
+      <label for="categoryFilter">Category</label>
+      <select id="categoryFilter" (change)="filterDocuments($event)">
         <option value="">All</option>
-        <option value="Financial">Financial</option>
-        <option value="Legal">Legal</option>
-        <option value="Projects">Projects</option>
-        <option value="HR">HR</option>
-        <option value="Custom Categories">Custom Categories</option>
-        <option value="Others">Others</option>
+        <option *ngFor="let category of categories" [value]="category.categoryName">
+          {{ category.categoryName }}
+        </option>
       </select>
     </div>
+    <!-- Additional filters can be added here -->
   </div>
 
-  <div *ngIf="dataSource.length > 0">
-    <table class="table">
-      <thead>
-        <tr>
-          <th (click)="sortData('documentTitle')">Title</th>
-          <th (click)="sortData('category')">Category</th>
-          <th (click)="sortData('priority')">Priority</th>
-          <th (click)="sortData('importance')">Importance</th>
-          <th (click)="sortData('documentDate')">Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let document of dataSource">
-          <td>{{ document.documentTitle }}</td>
-          <td>{{ document.category }}</td>
-          <td>{{ document.priority }}</td>
-          <td>{{ document.importance }}</td>
-          <td>{{ document.documentDate }}</td>
-          <td>
-            <button mat-icon-button color="accent" (click)="viewDocumentpopup(document.documentId)">
-              <mat-icon>visibility</mat-icon>
-            </button>
-            
-            <button mat-icon-button color="warn" (click)="editDocument(document.documentId)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteDocument(document.documentId)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </tbody>
+  <!-- Documents Table -->
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table">
+      <!-- Document Title Column -->
+      <ng-container matColumnDef="documentTitle">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+        <td mat-cell *matCellDef="let element">{{ element.documentTitle }}</td>
+      </ng-container>
+
+      <!-- Category Column -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+        <td mat-cell *matCellDef="let element">{{ element.category }}</td>
+      </ng-container>
+
+      <!-- Priority Column -->
+      <ng-container matColumnDef="priority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Priority</th>
+        <td mat-cell *matCellDef="let element">{{ element.priority }}</td>
+      </ng-container>
+
+      <!-- Importance Column -->
+      <ng-container matColumnDef="importance">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Importance</th>
+        <td mat-cell *matCellDef="let element">{{ element.importance }}</td>
+      </ng-container>
+
+      <!-- Document Date Column -->
+      <ng-container matColumnDef="documentDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell *matCellDef="let element">{{ element.documentDate }}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" aria-label="View Document" (click)="viewDocument(element.documentId)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" aria-label="Edit Document" (click)="editDocument(element.documentId)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" aria-label="Delete Document" (click)="deleteDocument(element.documentId)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Header and Row Declarations -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </div>
 
-  <div *ngIf="dataSource.length === 0" class="no-documents">
-    <p>No documents found.</p>
+  <!-- No Documents Message -->
+  <div *ngIf="dataSource.data.length === 0" class="no-documents">
+    No documents found.
   </div>
 </div>

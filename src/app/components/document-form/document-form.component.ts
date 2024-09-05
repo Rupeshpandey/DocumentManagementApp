@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
   templateUrl: './document-form.component.html',
   styleUrls: ['./document-form.component.css']
 })
-export class DocumentFormComponent {
+export class DocumentFormComponent implements OnInit {
   documentTitle: string = '';
   category: string = '';
   priority: number = 1;
@@ -16,14 +16,34 @@ export class DocumentFormComponent {
   documentDate: string = '';
   documentFile: File | null = null;
 
-  categories: string[] = ['Financial', 'Legal', 'Projects', 'HR', 'Custom Categories', 'Others'];
+  categories: { categoryId: number, categoryName: string }[] = [];
 
   constructor(private http: HttpClient, private router: Router) {}
+
+  ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.http.get<{ categoryId: number, categoryName: string }[]>('https://localhost:7143/api/Document/categories')
+      .subscribe({
+        next: (data) => {
+          console.log('Loaded categories:', data);
+          this.categories = data;
+        },
+        error: (error) => {
+          console.error('Error loading categories:', error);
+        }
+      });
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.documentFile = input.files[0];
+      console.log('Selected file:', this.documentFile.name);
+    } else {
+      console.log('No file selected or file input is empty');
     }
   }
 
@@ -39,7 +59,7 @@ export class DocumentFormComponent {
   
     const formData = new FormData();
     formData.append('DocumentTitle', this.documentTitle);
-    formData.append('Category', this.category);
+    formData.append('CategoryId', this.category); // Changed to CategoryId
     formData.append('Priority', this.priority.toString());
     formData.append('Importance', this.importance.toString());
     formData.append('DocumentDate', this.documentDate);
@@ -64,6 +84,7 @@ export class DocumentFormComponent {
         }
       });
   }
+  
 
   logout() {
     Swal.fire({

@@ -7,14 +7,11 @@
     </div>
 
     <div class="form-group">
-      <label for="category">Category</label>
-      <select id="category" class="form-control" formControlName="category">
-        <option value="Financial">Financial</option>
-        <option value="Legal">Legal</option>
-        <option value="Projects">Projects</option>
-        <option value="HR">HR</option>
-        <option value="Custom Categories">Custom Categories</option>
-        <option value="Others">Others</option>
+      <label for="categoryId">Category</label>
+      <select id="categoryId" class="form-control" formControlName="categoryId">
+        <option *ngFor="let cat of categories" [value]="cat.categoryId">
+          {{ cat.categoryName }}
+        </option>
       </select>
     </div>
 
@@ -46,6 +43,9 @@
     <div class="form-group">
       <label for="documentFileName">Document File</label>
       <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
+      <small class="form-text text-muted">
+        {{ selectedFile ? 'Selected File: ' + selectedFile.name : documentFileName ? 'Uploaded File: ' + documentFileName : 'No file selected' }}
+      </small>
     </div>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="documentForm.invalid">Update</button>

@@ -1,19 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
 
 interface Document {
   documentId: number;
   documentTitle: string;
-  category: string;
+  categoryId: number;
   priority: number;
   importance: number;
   documentFileName: string;
   documentDate: string | null;
+  category?: string;
+}
+
+interface Category {
+  categoryId: number;
+  categoryName: string;
 }
 
 @Component({
@@ -21,13 +30,17 @@ interface Document {
   templateUrl: './document-dashboard.component.html',
   styleUrls: ['./document-dashboard.component.css'],
 })
-export class DocumentDashboardComponent implements OnInit {
+export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
-  dataSource: Document[] = [];
-  originalDataSource: Document[] = []; // Copy of original data
+  dataSource: MatTableDataSource<Document> = new MatTableDataSource<Document>([]);
+  originalDataSource: Document[] = [];
+  categories: Category[] = [];
+  filterValues = {
+    category: ''
+  };
 
-  sortColumn: string = '';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private http: HttpClient,
@@ -37,17 +50,40 @@ export class DocumentDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchDocuments();
+    this.fetchCategories();
+    this.dataSource.filterPredicate = this.createFilter();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  fetchCategories() {
+    this.http.get<Category[]>('https://localhost:7143/api/Document/categories').subscribe(
+      (data) => {
+        console.log('Fetched categories:', data);
+        this.categories = data;
+        this.fetchDocuments(); // Fetch documents after categories are loaded
+      },
+      (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    );
   }
 
   fetchDocuments() {
     this.http.get<Document[]>('https://localhost:7143/api/Document/get').subscribe(
       (data) => {
+        console.log('Fetched documents:', data);
         this.originalDataSource = data.map((doc) => ({
           ...doc,
+          category: this.categories.find(cat => cat.categoryId === doc.categoryId)?.categoryName || 'Unknown',
           documentDate: doc.documentDate ? this.datePipe.transform(new Date(doc.documentDate), 'dd-MM-yyyy') : null,
         }));
-        this.dataSource = [...this.originalDataSource]; // Initialize dataSource with original data
+
+        this.dataSource.data = this.originalDataSource;
+        console.log('Original dataSource:', this.originalDataSource);
       },
       (error) => {
         console.error('Error fetching documents:', error);
@@ -55,50 +91,25 @@ export class DocumentDashboardComponent implements OnInit {
     );
   }
 
+  createFilter(): (data: Document, filter: string) => boolean {
+    return (data: Document, filter: string): boolean => {
+      const searchTerms = JSON.parse(filter);
+      return (searchTerms.category === '' || (data.category?.toLowerCase() || '').includes(searchTerms.category.toLowerCase()));
+
+    };
+  }
+
+  applyFilter() {
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   filterDocuments(event: any) {
-    const category = event.target.value.trim().toLowerCase();
-    if (category) {
-      this.dataSource = this.originalDataSource.filter((doc) =>
-        doc.category.toLowerCase().includes(category)
-      );
-    } else {
-      this.dataSource = [...this.originalDataSource]; // Reset to original data if no category is selected
-    }
-  }
-
-  sortData(column: string): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-
-    this.dataSource.sort((a, b) => {
-      let valueA = this.getValue(a, column);
-      let valueB = this.getValue(b, column);
-
-      if (valueA < valueB) {
-        return this.sortDirection === 'asc' ? -1 : 1;
-      } else if (valueA > valueB) {
-        return this.sortDirection === 'asc' ? 1 : -1;
-      } else {
-        return 0;
-      }
-    });
-  }
-
-  getValue(document: Document, column: string): any {
-    switch (column) {
-      case 'documentDate':
-        return new Date(document.documentDate || '').getTime();
-      case 'priority':
-        return document.priority;
-      case 'importance':
-        return document.importance;
-      default:
-        return document[column as keyof Document]?.toString().toLowerCase();
-    }
+    const value = event.target.value.trim().toLowerCase();
+    this.filterValues.category = value;
+    this.applyFilter();
   }
 
   deleteDocument(documentId: number): void {
@@ -149,7 +160,7 @@ export class DocumentDashboardComponent implements OnInit {
   }
 
   viewDocumentpopup(documentId: number): void {
-    const document = this.dataSource.find((doc) => doc.documentId === documentId);
+    const document = this.dataSource.data.find((doc) => doc.documentId === documentId);
     if (document) {
       this.dialog.open(DocumentViewerComponent, {
         data: {

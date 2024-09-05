@@ -15,6 +15,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 
 @NgModule({
@@ -33,6 +35,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatToolbarModule,
     MatSortModule,
+    MatPaginatorModule
  
   ],
   exports: [
@@ -51,6 +54,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSortModule,
     MatDialogModule,
     MatToolbarModule,
+    MatPaginatorModule
   ],
   providers: [
     MatDatepickerModule
