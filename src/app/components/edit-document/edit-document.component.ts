@@ -76,27 +76,34 @@ export class EditDocumentComponent implements OnInit {
     if (this.documentForm.invalid) {
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append('documentTitle', this.documentForm.get('documentTitle')!.value);
-    formData.append('category', this.documentForm.get('category')!.value);
-    formData.append('priority', this.documentForm.get('priority')!.value);
-    formData.append('importance', this.documentForm.get('importance')!.value);
-    formData.append('documentDate', this.documentForm.get('documentDate')!.value);
-
+    formData.append('DocumentId', this.documentId.toString());
+    formData.append('DocumentTitle', this.documentForm.get('documentTitle')!.value);
+    formData.append('Category', this.documentForm.get('category')!.value);
+    formData.append('Priority', this.documentForm.get('priority')!.value);
+    formData.append('Importance', this.documentForm.get('importance')!.value);
+    formData.append('DocumentDate', this.documentForm.get('documentDate')!.value);
+  
     // Append the file only if a new file was selected
     if (this.selectedFile) {
-      formData.append('documentFileName', this.selectedFile);
+      formData.append('DocumentFile', this.selectedFile, this.selectedFile.name);
     }
-
-    this.http.put(`https://localhost:7143/api/Document/update/${this.documentId}`, formData).subscribe(
-      () => {
-        Swal.fire('Success', 'Document updated successfully', 'success');
-        this.router.navigate(['/document-dashboard']);
-      },
-      (error) => {
-        Swal.fire('Error', 'Failed to update the document', 'error');
-      }
-    );
+  
+    this.http.post('https://localhost:7143/api/Document/update', formData, { responseType: 'text' })
+      .subscribe(
+        (response: string) => {
+          console.log('API response:', response); // Log the API response
+          Swal.fire('Success', 'Document updated successfully', 'success');
+          this.router.navigate(['/dashboard']);
+        },
+        (error) => {
+          console.error('API error:', error); // Log the error response
+          Swal.fire('Error', 'Failed to update the document', 'error');
+        }
+      );
   }
+  
+
+
 }
