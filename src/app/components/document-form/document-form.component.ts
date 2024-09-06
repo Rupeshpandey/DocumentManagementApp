@@ -16,6 +16,7 @@ export class DocumentFormComponent implements OnInit {
   documentDate: string = '';
   documentFile: File | null = null;
   userId: number | null = null; // Change to number type
+  maxDate: string = ''; // Max date for documentDate input
 
   categories: { categoryId: number, categoryName: string }[] = [];
 
@@ -39,7 +40,19 @@ export class DocumentFormComponent implements OnInit {
       return;
     }
 
+    // Set the max date to today
+    this.setMaxDate();
+    
     this.loadCategories();
+  }
+
+  setMaxDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero
+    const day = today.getDate().toString().padStart(2, '0'); // Add leading zero
+    this.maxDate = `${year}-${month}-${day}`;
+    console.log('Max date set to:', this.maxDate);
   }
 
   loadCategories() {

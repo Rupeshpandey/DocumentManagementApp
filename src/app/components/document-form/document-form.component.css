@@ -75,3 +75,6 @@ h2 {
 .filters {
   margin-bottom: 20px;
 }
+input.form-control-range {
+  width: 100%;
+}

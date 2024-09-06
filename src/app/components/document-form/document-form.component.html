@@ -31,21 +31,23 @@
 
     <div class="form-group">
       <label for="priority">Priority</label>
-      <input type="range" id="priority" [(ngModel)]="priority" name="priority" min="1" max="7" class="form-control-range" />
+      <input type="range" id="priority" [(ngModel)]="priority" name="priority" min="1" max="7" class="form-control-range custom-range" />
       <small class="form-text text-muted">
         {{ getPriorityLabel(priority) }}
       </small>
     </div>
-
+    
     <div class="form-group">
       <label for="importance">Importance</label>
-      <input type="range" id="importance" [(ngModel)]="importance" name="importance" min="1" max="10" class="form-control-range" />
-      <small class="form-text text-muted">Importance: {{importance}}</small>
+      <input type="range" id="importance" [(ngModel)]="importance" name="importance" min="1" max="10" class="form-control-range custom-range" />
+      <small class="form-text text-muted">Importance: {{ importance }}</small>
     </div>
+    
 
     <div class="form-group">
       <label for="documentDate">Document Date</label>
-      <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" required />
+      <!-- Add max attribute to restrict future date selection -->
+      <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" [max]="maxDate" required />
     </div>
 
     <div class="form-group">
