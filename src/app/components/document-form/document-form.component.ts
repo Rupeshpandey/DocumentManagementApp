@@ -15,6 +15,7 @@ export class DocumentFormComponent implements OnInit {
   importance: number = 1;
   documentDate: string = '';
   documentFile: File | null = null;
+  userId: string | null = localStorage.getItem('userId'); // Retrieve the user ID from localStorage
 
   categories: { categoryId: number, categoryName: string }[] = [];
 
@@ -56,15 +57,25 @@ export class DocumentFormComponent implements OnInit {
       });
       return;
     }
-  
+
+    if (!this.userId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'User Not Logged In',
+        text: 'Please log in to submit the form.'
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append('DocumentTitle', this.documentTitle);
-    formData.append('CategoryId', this.category); // Changed to CategoryId
+    formData.append('CategoryId', this.category); // Ensure this is the correct ID
     formData.append('Priority', this.priority.toString());
     formData.append('Importance', this.importance.toString());
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
-  
+    formData.append('CreatedBy', this.userId); // Add the user ID to the form data
+
     this.http.post('https://localhost:7143/api/Document/insert', formData, { responseType: 'text' })
       .subscribe({
         next: (response) => {
@@ -84,7 +95,6 @@ export class DocumentFormComponent implements OnInit {
         }
       });
   }
-  
 
   logout() {
     Swal.fire({
@@ -97,6 +107,7 @@ export class DocumentFormComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem('userRole');
+        localStorage.removeItem('userId'); // Clear the user ID from localStorage
         this.router.navigate(['/login']);
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }

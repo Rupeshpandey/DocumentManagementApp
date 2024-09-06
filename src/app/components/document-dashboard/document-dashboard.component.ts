@@ -151,10 +151,6 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  viewDocument(documentId: number): void {
-    this.router.navigate(['/document/view', documentId]);
-  }
-
   goToAddDocument() {
     this.router.navigate(['/add-document']);
   }
