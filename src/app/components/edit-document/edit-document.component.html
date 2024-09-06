@@ -1,4 +1,14 @@
+<div class="header">
+  <mat-toolbar color="primary">
+    <span>Document Management System</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+</div>
 <div class="edit-document-container">
+ 
   <h2>Edit Document</h2>
   <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
     <div class="form-group">
@@ -44,7 +54,15 @@
       <label for="documentFileName">Document File</label>
       <input id="documentFileName" type="file" class="form-control" (change)="onFileSelected($event)" />
       <small class="form-text text-muted">
-        {{ selectedFile ? 'Selected File: ' + selectedFile.name : documentFileName ? 'Uploaded File: ' + documentFileName : 'No file selected' }}
+        <ng-container *ngIf="selectedFile">
+          Selected File: {{ selectedFile.name }}
+        </ng-container>
+        <ng-container *ngIf="!selectedFile && documentFileName">
+          Uploaded File: <a [href]="getFileUrl(documentFileName)" target="_blank">{{ documentFileName }}</a>
+        </ng-container>
+        <ng-container *ngIf="!selectedFile && !documentFileName">
+          No file selected
+        </ng-container>
       </small>
     </div>
 

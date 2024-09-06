@@ -1,4 +1,13 @@
 <div class="document-dashboard-container">
+  <div class="header">
+    <mat-toolbar color="primary">
+      <span>Document Management System</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+  </div>
   <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h2>Document Dashboard</h2>
@@ -16,7 +25,6 @@
         </option>
       </select>
     </div>
-    <!-- Additional filters can be added here -->
   </div>
 
   <!-- Documents Table -->
@@ -59,12 +67,16 @@
           <button mat-icon-button color="primary" aria-label="View Document" (click)="viewDocumentpopup(element.documentId)">
             <mat-icon>visibility</mat-icon>
           </button>
-          <button mat-icon-button color="accent" aria-label="Edit Document" (click)="editDocument(element.documentId)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" aria-label="Delete Document" (click)="deleteDocument(element.documentId)">
-            <mat-icon>delete</mat-icon>
-          </button>
+
+          <!-- Show edit and delete buttons only if the user is not an admin -->
+          <ng-container *ngIf="userRole !== 'admin'">
+            <button mat-icon-button color="accent" aria-label="Edit Document" (click)="editDocument(element.documentId)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" aria-label="Delete Document" (click)="deleteDocument(element.documentId)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
         </td>
       </ng-container>
 
@@ -75,10 +87,5 @@
 
     <!-- Paginator -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-  </div>
-
-  <!-- No Documents Message -->
-  <div *ngIf="dataSource.data.length === 0" class="no-documents">
-    No documents found.
   </div>
 </div>

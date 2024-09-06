@@ -17,12 +17,19 @@ export class LoginComponent {
   onLogin() {
     this.authService.login(this.username, this.password).subscribe(
       (res: any) => {
-        if (res && res.role === 'admin') {
-          this.router.navigate(['/dashboard']);  // Redirect to Admin Dashboard
-        } else if (res && res.role === 'section') {
-          this.router.navigate(['/add-document']);  // Redirect to Section User Document Form
+        if (res && res.message === 'Login successful') {
+          localStorage.setItem('userId', JSON.stringify(res.userId)); // Convert userId to string for localStorage
+          localStorage.setItem('userRole', res.role);  // Store user role
+
+          if (res.role === 'admin') {
+            this.router.navigate(['/dashboard']);  // Redirect to Admin Dashboard
+          } else if (res.role === 'section') {
+            this.router.navigate(['/add-document']);  // Redirect to Section User Document Form
+          } else {
+            Swal.fire('Error', 'User role not recognized', 'error');
+          }
         } else {
-          Swal.fire('Error', 'User role not recognized', 'error');
+          Swal.fire('Error', 'Login failed', 'error');
         }
       },
       err => {
@@ -30,5 +37,4 @@ export class LoginComponent {
       }
     );
   }
-  
 }

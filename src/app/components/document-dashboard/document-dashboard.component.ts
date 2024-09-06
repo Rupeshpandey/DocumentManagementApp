@@ -38,6 +38,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   filterValues = {
     category: ''
   };
+  userRole: string = '';  // Store user role
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -52,6 +53,9 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.fetchCategories();
     this.dataSource.filterPredicate = this.createFilter();
+
+    // Get user role from localStorage
+    this.userRole = localStorage.getItem('userRole') || '';
   }
 
   ngAfterViewInit() {
@@ -95,7 +99,6 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
     return (data: Document, filter: string): boolean => {
       const searchTerms = JSON.parse(filter);
       return (searchTerms.category === '' || (data.category?.toLowerCase() || '').includes(searchTerms.category.toLowerCase()));
-
     };
   }
 

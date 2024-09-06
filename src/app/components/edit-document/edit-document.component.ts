@@ -12,6 +12,7 @@ interface Document {
   importance: number;
   documentFileName: string;
   documentDate: string | null;
+  updatedBy: number;
 }
 
 interface Category {
@@ -27,9 +28,10 @@ interface Category {
 export class EditDocumentComponent implements OnInit {
   documentForm: FormGroup;
   documentId: number;
-  selectedFile: File | null = null; // Store the selected file here
-  documentFileName: string = ''; // Store the uploaded file name here
-  categories: Category[] = []; // Array to store categories
+  selectedFile: File | null = null;
+  documentFileName: string = '';
+  categories: Category[] = [];
+  userId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -43,24 +45,38 @@ export class EditDocumentComponent implements OnInit {
       priority: ['', Validators.required],
       importance: ['', [Validators.required, Validators.min(1), Validators.max(10)]],
       documentDate: ['', Validators.required],
-      documentFileName: [''] // No need to use formControlName for file inputs
+      documentFileName: [''],
+      updatedBy: ['']
     });
     this.documentId = 0;
   }
 
   ngOnInit(): void {
     this.documentId = +this.route.snapshot.paramMap.get('id')!;
-    this.getCategories(); // Fetch categories before fetching document details
+    const userIdStr = localStorage.getItem('userId');
+    this.userId = userIdStr ? parseInt(userIdStr, 10) : null;
+
+    if (this.userId === null) {
+      console.error('User ID is not set in localStorage');
+      Swal.fire({
+        icon: 'error',
+        title: 'User Not Logged In',
+        text: 'User ID could not be retrieved from localStorage.'
+      });
+      return;
+    }
+
+    this.getCategories();
   }
 
   getCategories(): void {
     this.http.get<Category[]>('https://localhost:7143/api/Document/categories').subscribe(
       (data) => {
         this.categories = data;
-        console.log('Fetched categories:', this.categories); // Log to verify categories are fetched
-        this.getDocumentDetails(this.documentId); // Fetch document details after categories are loaded
+        this.getDocumentDetails(this.documentId);
       },
       (error) => {
+        console.error('Error fetching categories:', error);
         Swal.fire('Error', 'Failed to load categories', 'error');
       }
     );
@@ -73,16 +89,18 @@ export class EditDocumentComponent implements OnInit {
 
         this.documentForm.patchValue({
           documentTitle: data.documentTitle,
-          categoryId: data.categoryId, // Patch the categoryId field
+          categoryId: data.categoryId,
           priority: data.priority,
           importance: data.importance,
-          documentDate: formattedDate
+          documentDate: formattedDate,
+          documentFileName: data.documentFileName,
+          updatedBy: data.updatedBy
         });
 
-        this.documentFileName = data.documentFileName; // Set the file name
-        console.log('Fetched document details:', data); // Log to verify document details are fetched
+        this.documentFileName = data.documentFileName;
       },
       (error) => {
+        console.error('Error fetching document details:', error);
         Swal.fire('Error', 'Failed to load document details', 'error');
       }
     );
@@ -92,41 +110,64 @@ export class EditDocumentComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      this.documentFileName = file.name; // Update the file name after selection
-      console.log('Selected file:', file); // Log to verify file selection
+      this.documentFileName = file.name;
     }
+  }
+
+  getFileUrl(fileName: string): string {
+    return `https://localhost:7143/api/document/view/${this.documentId}`;
   }
 
   saveDocument(): void {
     if (this.documentForm.invalid) {
+      console.log('Form is invalid. Cannot save document.');
       return;
     }
 
     const formData = new FormData();
     formData.append('DocumentId', this.documentId.toString());
     formData.append('DocumentTitle', this.documentForm.get('documentTitle')!.value);
-    formData.append('CategoryId', this.documentForm.get('categoryId')!.value); // Use CategoryId instead of CategoryName
+    formData.append('CategoryId', this.documentForm.get('categoryId')!.value);
     formData.append('Priority', this.documentForm.get('priority')!.value);
     formData.append('Importance', this.documentForm.get('importance')!.value);
     formData.append('DocumentDate', this.documentForm.get('documentDate')!.value);
+    formData.append('UpdatedBy', this.userId!.toString());
 
     if (this.selectedFile) {
       formData.append('DocumentFile', this.selectedFile, this.selectedFile.name);
     } else {
-      formData.append('DocumentFileName', this.documentFileName); // Keep the existing file if not replaced
+      formData.append('DocumentFileName', this.documentFileName);
     }
+
+    console.log('FormData being sent:');
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
 
     this.http.post('https://localhost:7143/api/Document/update', formData, { responseType: 'text' })
       .subscribe(
         (response: string) => {
-          console.log('API response:', response); // Log the API response
           Swal.fire('Success', 'Document updated successfully', 'success');
           this.router.navigate(['/dashboard']);
         },
         (error) => {
-          console.error('API error:', error); // Log the error response
+          console.error('API error:', error);
           Swal.fire('Error', 'Failed to update the document', 'error');
         }
       );
+  }
+  logout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

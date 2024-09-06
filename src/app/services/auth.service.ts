@@ -7,29 +7,28 @@ import { catchError, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-
   private apiUrl = 'https://localhost:7143/api/Document';  // Update with your actual API URL
 
   constructor(private http: HttpClient) {}
 
-  // Login method to authenticate the user
   login(username: string, password: string): Observable<any> {
-    const role = username.toLowerCase() === 'admin' ? 'admin' : 'section'; // Set role based on username
-    
     const loginPayload = {
-      userId: 0,
+      userId: 0,  // Default value as required by the API
       username: username,
       passwordHash: password,
-      role: role // Assigning role dynamically
+      role: username.toLowerCase() === 'admin' ? 'admin' : 'section'
     };
-  
+
     return this.http.post<any>(`${this.apiUrl}/login`, loginPayload).pipe(
       map(response => {
-        console.log('API response:', response);
-        if (response.message === 'Login successful') {
-          // Save the user role to localStorage for further use
-          localStorage.setItem('userRole', response.role);
-          return response; // Returning the full response including the role
+        if (response && response.message === 'Login successful') {
+          if (response.userId !== undefined && response.userId !== null) {
+            localStorage.setItem('userId', JSON.stringify(response.userId)); // Convert userId to string for localStorage
+          } else {
+            console.error('userId is undefined or null in the response');
+          }
+          localStorage.setItem('userRole', response.role);  // Store user role
+          return response; // Returning the full response including the role and user ID
         } else {
           return null;
         }
@@ -40,8 +39,8 @@ export class AuthService {
       })
     );
   }
+
   isLoggedIn(): boolean {
-    // Check if user is logged in (e.g., check token in localStorage)
     return !!localStorage.getItem('userRole');
   }
 }

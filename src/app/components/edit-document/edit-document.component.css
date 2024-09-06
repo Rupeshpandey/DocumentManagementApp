@@ -55,5 +55,15 @@
   input.form-control-range {
     width: 100%;
   }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
   
   
