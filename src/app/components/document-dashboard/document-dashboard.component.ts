@@ -31,7 +31,7 @@ interface Category {
   styleUrls: ['./document-dashboard.component.css'],
 })
 export class DocumentDashboardComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
+  displayedColumns: string[] = ['serialNumber', 'documentTitle', 'category', 'priority', 'importance', 'documentDate', 'actions'];
   dataSource: MatTableDataSource<Document> = new MatTableDataSource<Document>([]);
   originalDataSource: Document[] = [];
   categories: Category[] = [];

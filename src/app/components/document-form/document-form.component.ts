@@ -171,4 +171,10 @@ export class DocumentFormComponent implements OnInit {
     console.log(`Priority label for ${priority}: ${labels[priority - 1]}`);
     return labels[priority - 1];
   }
+  openCalendar() {
+    const documentDateInput = document.getElementById('documentDate') as HTMLInputElement;
+    documentDateInput?.focus(); // Triggers the focus event to open the calendar
+  }
+  
+  
 }

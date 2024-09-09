@@ -30,6 +30,12 @@
   <!-- Documents Table -->
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 table">
+      <!-- Serial Number Column -->
+      <ng-container matColumnDef="serialNumber">
+        <th mat-header-cell *matHeaderCellDef>S.No</th>
+        <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+      </ng-container>
+
       <!-- Document Title Column -->
       <ng-container matColumnDef="documentTitle">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
@@ -64,16 +70,19 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" aria-label="View Document" (click)="viewDocumentpopup(element.documentId)">
+          <button mat-icon-button color="primary" aria-label="View Document"
+            (click)="viewDocumentpopup(element.documentId)">
             <mat-icon>visibility</mat-icon>
           </button>
 
           <!-- Show edit and delete buttons only if the user is not an admin -->
           <ng-container *ngIf="userRole !== 'admin'">
-            <button mat-icon-button color="accent" aria-label="Edit Document" (click)="editDocument(element.documentId)">
+            <button mat-icon-button color="accent" aria-label="Edit Document"
+              (click)="editDocument(element.documentId)">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" aria-label="Delete Document" (click)="deleteDocument(element.documentId)">
+            <button mat-icon-button color="warn" aria-label="Delete Document"
+              (click)="deleteDocument(element.documentId)">
               <mat-icon>delete</mat-icon>
             </button>
           </ng-container>

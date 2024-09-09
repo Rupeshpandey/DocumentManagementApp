@@ -25,9 +25,11 @@
     <div class="form-group">
       <label for="category">Category</label>
       <select id="category" [(ngModel)]="category" name="category" class="form-control" required>
+        <option value="" disabled selected>Select</option> <!-- Default option -->
         <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.categoryName }}</option>
       </select>
     </div>
+    
 
     <div class="form-group">
       <label for="priority">Priority</label>
@@ -47,8 +49,9 @@
     <div class="form-group">
       <label for="documentDate">Document Date</label>
       <!-- Add max attribute to restrict future date selection -->
-      <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" [max]="maxDate" required />
+      <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" [max]="maxDate" required (click)="openCalendar()" />
     </div>
+    
 
     <div class="form-group">
       <label for="documentFile">Upload Document</label>
