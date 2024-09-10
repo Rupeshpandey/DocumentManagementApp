@@ -116,6 +116,13 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
   }
 
   deleteDocument(documentId: number): void {
+    const userId = localStorage.getItem('userId'); // Retrieve userId from localStorage
+  
+    if (!userId) {
+      Swal.fire('Error', 'User is not logged in.', 'error');
+      return;
+    }
+  
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -126,7 +133,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}`, { responseType: 'text' }).subscribe(
+        this.http.delete(`https://localhost:7143/api/Document/delete/${documentId}?userId=${userId}`, { responseType: 'text' }).subscribe(
           () => {
             Swal.fire('Deleted!', 'The document has been deleted.', 'success');
             this.fetchDocuments(); // Reload the documents after deletion
@@ -138,6 +145,7 @@ export class DocumentDashboardComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  
 
   logout() {
     Swal.fire({

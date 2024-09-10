@@ -86,18 +86,22 @@ export class EditDocumentComponent implements OnInit {
     this.http.get<Document>(`https://localhost:7143/api/Document/get/${documentId}`).subscribe(
       (data) => {
         const formattedDate = data.documentDate ? data.documentDate.split('T')[0] : null;
-
+  
+        // Strip UUID from the file name (assuming the file name follows the pattern: UUID_filename)
+        const fileNameParts = data.documentFileName.split('_');
+        const actualFileName = fileNameParts.length > 1 ? fileNameParts.slice(1).join('_') : data.documentFileName;
+  
         this.documentForm.patchValue({
           documentTitle: data.documentTitle,
           categoryId: data.categoryId,
           priority: data.priority,
           importance: data.importance,
           documentDate: formattedDate,
-          documentFileName: data.documentFileName,
+          documentFileName: actualFileName, // Set the actual file name
           updatedBy: data.updatedBy
         });
-
-        this.documentFileName = data.documentFileName;
+  
+        this.documentFileName = actualFileName; // Store the stripped file name for display
       },
       (error) => {
         console.error('Error fetching document details:', error);
@@ -105,6 +109,7 @@ export class EditDocumentComponent implements OnInit {
       }
     );
   }
+  
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -120,8 +125,8 @@ export class EditDocumentComponent implements OnInit {
 
   saveDocument(): void {
     if (this.documentForm.invalid) {
-      console.log('Form is invalid. Cannot save document.');
-      return;
+        console.log('Form is invalid. Cannot save document.');
+        return;
     }
 
     const formData = new FormData();
@@ -134,28 +139,36 @@ export class EditDocumentComponent implements OnInit {
     formData.append('UpdatedBy', this.userId!.toString());
 
     if (this.selectedFile) {
-      formData.append('DocumentFile', this.selectedFile, this.selectedFile.name);
+        // If a new file is selected, append it
+        formData.append('DocumentFile', this.selectedFile, this.selectedFile.name);
+    } else if (this.documentFileName) {
+        // If no new file is selected, retain the existing file
+        formData.append('DocumentFile', new Blob(), this.documentFileName);  // Send empty blob
     } else {
-      formData.append('DocumentFileName', this.documentFileName);
+        // If no file is selected and no existing file, handle this case accordingly
+        formData.append('DocumentFile', new Blob([''], { type: 'text/plain' }), 'dummy.txt'); // Dummy file
     }
 
     console.log('FormData being sent:');
     formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
+        console.log(`${key}: ${value}`);
     });
 
     this.http.post('https://localhost:7143/api/Document/update', formData, { responseType: 'text' })
-      .subscribe(
-        (response: string) => {
-          Swal.fire('Success', 'Document updated successfully', 'success');
-          this.router.navigate(['/dashboard']);
-        },
-        (error) => {
-          console.error('API error:', error);
-          Swal.fire('Error', 'Failed to update the document', 'error');
-        }
-      );
-  }
+        .subscribe(
+            (response: string) => {
+                Swal.fire('Success', 'Document updated successfully', 'success');
+                this.router.navigate(['/dashboard']);
+            },
+            (error) => {
+                console.error('API error:', error);
+                Swal.fire('Error', 'Failed to update the document', 'error');
+            }
+        );
+}
+
+  
+  
   logout() {
     Swal.fire({
       title: 'Are you sure?',
