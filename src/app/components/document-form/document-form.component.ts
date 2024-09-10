@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-document-form',
@@ -15,23 +16,20 @@ export class DocumentFormComponent implements OnInit {
   importance: number = 1;
   documentDate: string = '';
   documentFile: File | null = null;
-  userId: number | null = null; // Change to number type
-  maxDate: string = ''; // Max date for documentDate input
+  userId: number | null = null;
+  maxDate: string = '';
 
   categories: { categoryId: number, categoryName: string }[] = [];
+
+  @ViewChild('documentForm') documentForm!: NgForm;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
-    console.log('DocumentFormComponent initialized');
     const userIdStr = localStorage.getItem('userId');
-    
-    // Convert userId to number
     this.userId = userIdStr ? parseInt(userIdStr, 10) : null;
 
-    // Check if userId is null and handle it
     if (this.userId === null) {
-      console.error('User ID is not set in localStorage');
       Swal.fire({
         icon: 'error',
         title: 'User Not Logged In',
@@ -40,27 +38,19 @@ export class DocumentFormComponent implements OnInit {
       return;
     }
 
-    // Set the max date to today
     this.setMaxDate();
-    
     this.loadCategories();
   }
 
   setMaxDate() {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero
-    const day = today.getDate().toString().padStart(2, '0'); // Add leading zero
-    this.maxDate = `${year}-${month}-${day}`;
-    console.log('Max date set to:', this.maxDate);
+    this.maxDate = today.toISOString().split('T')[0];
   }
 
   loadCategories() {
-    console.log('Loading categories...');
     this.http.get<{ categoryId: number, categoryName: string }[]>('https://localhost:7143/api/Document/categories')
       .subscribe({
         next: (data) => {
-          console.log('Loaded categories:', data);
           this.categories = data;
         },
         error: (error) => {
@@ -73,16 +63,20 @@ export class DocumentFormComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.documentFile = input.files[0];
-      console.log('Selected file:', this.documentFile.name);
-    } else {
-      console.log('No file selected or file input is empty');
     }
   }
 
   submitForm() {
-    console.log('Submitting form...');
+    if (!this.documentForm.valid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Form Incomplete',
+        text: 'Please fill out all required fields correctly.'
+      });
+      return;
+    }
+
     if (!this.documentFile) {
-      console.log('No file selected.');
       Swal.fire({
         icon: 'warning',
         title: 'File Required',
@@ -92,7 +86,6 @@ export class DocumentFormComponent implements OnInit {
     }
 
     if (this.userId === null) {
-      console.log('User not logged in.');
       Swal.fire({
         icon: 'error',
         title: 'User Not Logged In',
@@ -108,22 +101,11 @@ export class DocumentFormComponent implements OnInit {
     formData.append('Importance', this.importance.toString());
     formData.append('DocumentDate', this.documentDate);
     formData.append('DocumentFile', this.documentFile);
-    formData.append('CreatedBy', this.userId.toString()); // Convert userId to string
-
-    console.log('Form data being sent:', {
-      DocumentTitle: this.documentTitle,
-      CategoryId: this.category,
-      Priority: this.priority,
-      Importance: this.importance,
-      DocumentDate: this.documentDate,
-      DocumentFile: this.documentFile?.name,
-      CreatedBy: this.userId
-    });
+    formData.append('CreatedBy', this.userId.toString());
 
     this.http.post('https://localhost:7143/api/Document/insert', formData, { responseType: 'text' })
       .subscribe({
         next: (response) => {
-          console.log('Document added successfully:', response);
           Swal.fire({
             icon: 'success',
             title: 'Document Added',
@@ -132,7 +114,6 @@ export class DocumentFormComponent implements OnInit {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          console.error('Error adding document:', error);
           Swal.fire({
             icon: 'error',
             title: 'Submission Failed',
@@ -143,7 +124,6 @@ export class DocumentFormComponent implements OnInit {
   }
 
   logout() {
-    console.log('Logging out...');
     Swal.fire({
       title: 'Are you sure?',
       text: 'You will be logged out.',
@@ -153,8 +133,7 @@ export class DocumentFormComponent implements OnInit {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userId'); // Clear the user ID from localStorage
+        localStorage.removeItem('userId');
         this.router.navigate(['/login']);
         Swal.fire('Logged Out', 'You have been logged out.', 'success');
       }
@@ -162,19 +141,11 @@ export class DocumentFormComponent implements OnInit {
   }
 
   goToDashboard() {
-    console.log('Navigating to dashboard...');
     this.router.navigate(['/dashboard']);
   }
 
   getPriorityLabel(priority: number): string {
     const labels = ['Not at all Important', 'Slightly Important', 'Somewhat Important', 'Moderately Important', 'Important', 'Very Important', 'Extremely Important'];
-    console.log(`Priority label for ${priority}: ${labels[priority - 1]}`);
     return labels[priority - 1];
   }
-  openCalendar() {
-    const documentDateInput = document.getElementById('documentDate') as HTMLInputElement;
-    documentDateInput?.focus(); // Triggers the focus event to open the calendar
-  }
-  
-  
 }

@@ -16,20 +16,36 @@
     <button mat-raised-button color="primary" (click)="goToDashboard()">Dashboard</button>
   </div>
 
-  <form (ngSubmit)="submitForm()">
-    <div class="form-group">
+  <form (ngSubmit)="submitForm()" #documentForm="ngForm">
+    <div class="form-group" [ngClass]="{'has-error': documentForm.submitted && !documentForm.controls['documentTitle'].valid}">
       <label for="documentTitle">Document Title</label>
-      <input type="text" id="documentTitle" [(ngModel)]="documentTitle" name="documentTitle" class="form-control" required />
-    </div>
-
-    <div class="form-group">
-      <label for="category">Category</label>
-      <select id="category" [(ngModel)]="category" name="category" class="form-control" required>
-        <option value="" disabled selected>Select</option> <!-- Default option -->
-        <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.categoryName }}</option>
-      </select>
+      <input
+        type="text"
+        id="documentTitle"
+        [(ngModel)]="documentTitle"
+        name="documentTitle"
+        class="form-control"
+        required
+        pattern="[a-zA-Z\s]*"
+        title="Document Title must contain only letters and spaces."
+      />
+      <div *ngIf="(documentForm.submitted || documentForm.controls['documentTitle'].touched) && !documentForm.controls['documentTitle'].valid" class="validation-error">
+        <small *ngIf="documentForm.controls['documentTitle'].errors?.['required']">Document Title is required.</small>
+        <small *ngIf="documentForm.controls['documentTitle'].errors?.['pattern']">Document Title must contain only letters and spaces.</small>
+      </div>
     </div>
     
+
+    <div class="form-group" [ngClass]="{'has-error': documentForm.submitted && !documentForm.controls['category'].valid}">
+      <label for="category">Category</label>
+      <select id="category" [(ngModel)]="category" name="category" class="form-control" required>
+        <option value="" disabled selected>Select</option>
+        <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.categoryName }}</option>
+      </select>
+      <div *ngIf="documentForm.submitted && !documentForm.controls['category'].valid" class="validation-error">
+        <small>Category is required.</small>
+      </div>
+    </div>
 
     <div class="form-group">
       <label for="priority">Priority</label>
@@ -38,24 +54,43 @@
         {{ getPriorityLabel(priority) }}
       </small>
     </div>
-    
+
     <div class="form-group">
       <label for="importance">Importance</label>
       <input type="range" id="importance" [(ngModel)]="importance" name="importance" min="1" max="10" class="form-control-range custom-range" />
       <small class="form-text text-muted">Importance: {{ importance }}</small>
     </div>
-    
 
-    <div class="form-group">
+    <div class="form-group" [ngClass]="{'has-error': documentForm.submitted && !documentForm.controls['documentDate'].valid}">
       <label for="documentDate">Document Date</label>
-      <!-- Add max attribute to restrict future date selection -->
-      <input type="date" id="documentDate" [(ngModel)]="documentDate" name="documentDate" class="form-control" [max]="maxDate" required (click)="openCalendar()" />
+      <input
+        type="date"
+        id="documentDate"
+        [(ngModel)]="documentDate"
+        name="documentDate"
+        class="form-control"
+        [max]="maxDate"
+        required
+      />
+      <div *ngIf="documentForm.submitted && !documentForm.controls['documentDate'].valid" class="validation-error">
+        <small>Document Date is required and cannot be in the future.</small>
+      </div>
     </div>
-    
 
-    <div class="form-group">
+    <div class="form-group" [ngClass]="{'has-error': documentForm.submitted && !documentForm.controls['documentFile'].valid}">
       <label for="documentFile">Upload Document</label>
-      <input type="file" id="documentFile" (change)="onFileSelected($event)" name="documentFile" class="form-control" accept=".pdf,.doc,.docx" required />
+      <input
+        type="file"
+        id="documentFile"
+        (change)="onFileSelected($event)"
+        name="documentFile"
+        class="form-control"
+        accept=".pdf,.doc,.docx"
+        required
+      />
+      <div *ngIf="documentForm.submitted && !documentForm.controls['documentFile'].valid" class="validation-error">
+        <small>Document file is required. Only PDF, DOC, or DOCX formats are allowed.</small>
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
